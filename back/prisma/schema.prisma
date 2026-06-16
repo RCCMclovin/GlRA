@@ -78,6 +78,8 @@ model Project{
   description String    @db.VarChar(600)
   creator     User      @relation(fields: [creatorId], references: [id])
   creatorId   String    @db.Char(36)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt
 
   findingProjects FindingProject[]
 

@@ -1,0 +1,6 @@
+import Joi from 'joi';
+
+export const projectSchema = Joi.object().keys({
+  name: Joi.string().min(3).max(40).required(),
+  description: Joi.string().min(3).max(600).required()
+});

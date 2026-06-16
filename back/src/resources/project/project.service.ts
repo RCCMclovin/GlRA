@@ -16,7 +16,19 @@ async function projectExists(id: string): Promise<boolean> {
 }
 
 async function findProjectsByCreator(id: string): Promise<ProjectDTO[]> {
-  return await prisma.project.findMany({ where: { creatorId: id } });
+  return await prisma.project.findMany({ where: { creatorId: id }, orderBy:{createdAt: 'desc'} });
+}
+
+async function create(data: ProjectDTO, creatorId: string): Promise<Project>{
+  return await prisma.project.create({data:{ ...data, creatorId}});
+}
+
+async function update(id: string, data: ProjectDTO): Promise<Project>{
+  return await prisma.project.update({data: data, where:{id}});
+}
+
+async function remove(id: string): Promise<void>{
+  await prisma.project.delete({where:{id}});
 }
 
 export default {
@@ -24,4 +36,7 @@ export default {
     findProjectsById,
     projectExists,
     findProjectsByCreator,
+    create,
+    update,
+    remove,
 }
