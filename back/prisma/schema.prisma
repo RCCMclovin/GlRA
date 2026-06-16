@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(uuid()) @db.Char(36)
+  email       String    @unique @db.VarChar(100)
+  name        String    @db.VarChar(100)
+  password    String    @db.VarChar(60)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt
+
+  findings Finding[] @relation("reporter")
+  assigned Finding[] @relation("assigned")
+
+  notifications Notification[]
+
+  projects Project[]
+
+  accessProjects AccessProject[]
+}
+
+model FindingType{
+  id          String    @id @default(uuid()) @db.Char(36)
+  name        String    @db.VarChar(100)
+
+  findings Finding[]
+}
+
+model FindingStatus{
+  id          String    @id @default(uuid()) @db.Char(36)
+  name        String    @db.VarChar(100)
+
+  findings Finding[]
+}
+
+model FindingSeverity{
+  id          String    @id @default(uuid()) @db.Char(36)
+  name        String    @db.VarChar(100)
+
+  findings Finding[]
+}
+
+model Notification {
+  id Int @id @default(autoincrement())
+  content String @db.VarChar(600)
+  read Boolean @default(false)
+
+  receiver        User    @relation(fields: [receiverId], references: [id])
+  receiverId      String  @db.Char(36)
+
+  @@map("notification")
+}
+
+model Media {
+  id          String      @id @default(uuid()) @db.Char(36)
+  link        String      @db.VarChar(255) 
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  findingMedias FindingMedia[]
+}
+
+model Project{
+  id          String    @id @default(uuid()) @db.Char(36)
+  title       String    @unique @db.VarChar(100)
+  description String    @db.VarChar(600)
+  creator     User      @relation(fields: [creatorId], references: [id])
+  creatorId   String    @db.Char(36)
+
+  findingProjects FindingProject[]
+
+  accessProjects AccessProject[]
+}
+
+model AccessProject{
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String        @db.Char(36)
+  project     Project       @relation(fields: [projectId], references: [id])
+  projectId   String        @db.Char(36)
+
+  @@id([userId,projectId])
+}
+
+model Finding{
+  id          String    @id @default(uuid()) @db.Char(36)
+  title       String    @unique @db.VarChar(100)
+  description String    @db.VarChar(600)
+  solution    String    @db.VarChar(600)
+
+  
+  category     FindingType      @relation(fields: [categoryId], references: [id])
+  categoryId   String           @db.Char(36)
+
+  status     FindingStatus      @relation(fields: [statusId], references: [id])
+  statusId   String             @db.Char(36)
+
+  severity     FindingSeverity  @relation(fields: [severityId], references: [id])
+  severityId   String           @db.Char(36)
+
+  reporterId  String    @db.Char(36)
+  reporter User @relation("reporter", fields: [reporterId], references: [id], map: "fk_reporter")
+  
+  assignedId  String    @db.Char(36)
+  assigned User @relation("assigned", fields: [assignedId], references: [id], map: "fk_assigned")
+  
+
+  findingProjects FindingProject[]
+
+  findingMedias FindingMedia[]
+}
+
+model FindingProject{
+  project     Project      @relation(fields: [projectId], references: [id])
+  projectId   String       @db.Char(36)
+  finding     Finding      @relation(fields: [findingId], references: [id])
+  findingId   String       @db.Char(36)
+
+  @@id([projectId, findingId])
+}
+
+model FindingMedia{
+  finding     Finding      @relation(fields: [findingId], references: [id])
+  findingId   String       @db.Char(36)
+  media       Media        @relation(fields: [mediaId], references: [id])
+  mediaId     String       @db.Char(36)
+
+  @@id([findingId, mediaId])
+
+}

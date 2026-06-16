@@ -1,0 +1,36 @@
+networks:
+  network2:
+    driver: bridge
+
+volumes:
+  output-data:
+
+services:
+  backend:
+    container_name: "gira-backend"
+    hostname: "gira-backend"
+    build: 
+      context: ./back
+      dockerfile: ./Dockerfile
+    networks:
+      - network2
+    volumes:
+      - output-data:/app/output
+    restart:
+      unless-stopped 
+    ports:
+      - 192.168.1.10:3333:3333
+  frontend:
+    container_name: "gira-frontend"
+    hostname: "gira-frontend"
+    build:
+      context: ./front
+      dockerfile: ./Dockerfile
+    networks:
+      - network2
+    volumes:
+      - output-data:/app/output
+    restart:
+      unless-stopped
+    ports:
+      - 192.168.1.10:3001:80
