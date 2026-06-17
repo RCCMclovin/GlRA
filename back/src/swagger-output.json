@@ -1231,6 +1231,10 @@
         "category": {
           "type": "string",
           "example": "CWE-120"
+        },
+        "projectId": {
+          "type": "string",
+          "example": "36a3ab3f-0e04-4cba-aa3d-ba35a3a9ab87"
         }
       }
     },

@@ -43,7 +43,8 @@ const doc = {
         },
         status: "Info Needed",
         severity: "Low",
-        category: "CWE-120"
+        category: "CWE-120",
+        projectId: "36a3ab3f-0e04-4cba-aa3d-ba35a3a9ab87"
     },
     CreateFindingDTO:{
         id: '98ec6545-23d1-4d9e-a565-0c7452b45a8b',
