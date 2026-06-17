@@ -110,8 +110,8 @@ const remove = async (req: Request, res: Response) => {
  description: "Internal Server Error."
  }
 */
-  const project = await projectService.findProjectsById(req.params.projectId as string) as Project;
-  try {
+ try {
+   const project = await projectService.findProjectsById(req.params.projectId as string) as Project;
     if(project){
         await projectService.remove(project.id);
         return res.status(StatusCodes.OK).send(ReasonPhrases.OK);

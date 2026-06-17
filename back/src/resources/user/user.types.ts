@@ -11,3 +11,5 @@ export type UpdateUserDTO = Pick<
 >;
 
 export type UserDTO = Omit<User, 'password'>;
+
+export type CardUser = Pick<User, 'id' | 'name'>;

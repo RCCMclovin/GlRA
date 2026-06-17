@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import FindingStatusService from './fidingStatus.service';
+import findingStatusService from './fidingStatus.service';
 
 const index = async (req: Request, res: Response) => {
   /*
@@ -17,7 +17,7 @@ const index = async (req: Request, res: Response) => {
  }
 */
   try {
-    const users = await FindingStatusService.index();
+    const users = await findingStatusService.index();
     return res.json(users);
   } catch (e) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(e);

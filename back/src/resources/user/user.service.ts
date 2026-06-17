@@ -1,5 +1,5 @@
 import { PrismaClient, User } from '../../generated/prisma/client';
-import { CreateUserDTO, UserDTO, UpdateUserDTO } from './user.types';
+import { CreateUserDTO, UserDTO, UpdateUserDTO, CardUser } from './user.types';
 import { genSalt, hash } from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -69,6 +69,10 @@ async function checkEmail(email: string): Promise<boolean> {
   return !!(await prisma.user.findUnique({ where: { email } }));
 }
 
+async function toCard(id: string): Promise<CardUser>{
+  return (await prisma.user.findUnique({where:{id}, select:{id:true, name:true}})) as CardUser;
+}
+
 export default {
   getAllUsers,
   findUserByEmail,
@@ -78,4 +82,5 @@ export default {
   readUser,
   checkEmail,
   readUserWithRole,
+  toCard,
 };
