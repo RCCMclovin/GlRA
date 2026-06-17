@@ -5,7 +5,7 @@ import path from 'path';
 dotenv.config();
 const doc = {
   info: {
-    title: 'API dos notas',
+    title: 'API do GlRA',
     description: 'Documentação da API',
     version: '1.0',
   },
@@ -28,68 +28,73 @@ const doc = {
       name: 'Fulano de Tal',
       email: 'email@example.com',
     },
-    UserDTO: {
-      id: "8cdebdfd-122c-4b03-af73-1009a621dfd4",
-      email: "email@example.com",
-      name: "Fulano de Tal",
-      createdAt: "DateTime",
-      updatedAt: "DateTime",
-      userTypeId: "b7790a6f-48de-4ad0-b871-85f3649ef5b4"
-    },
-    EventPublic:{
+    FindingPublic:{
         id: '98ec6545-23d1-4d9e-a565-0c7452b45a8b',
-        date: "DateTime",
-        creatorId: "8cdebdfd-122c-4b03-af73-1009a621dfd4",
-        description: "Text",
-        isPublished: "true",
-        createdAt: "DateTime",
-        updatedAt: "DateTime",
-        crator:{
+        reporter:{
           id: "8cdebdfd-122c-4b03-af73-1009a621dfd4",
           name: "Fulano de Tal"
-        }
-    },
-    Event:{
-        id: '98ec6545-23d1-4d9e-a565-0c7452b45a8b',
-        date: "DateTime",
-        creatorId: "8cdebdfd-122c-4b03-af73-1009a621dfd4",
+        },
+        title: "Text",
+        solution: "Text",
         description: "Text",
-        isPublished: "true",
-        code: "ABCDEFGH",
-        createdAt: "DateTime",
-        updatedAt: "DateTime"
-    },
-    CreateEventDTO: {
-        date: "DateTime",
-        description: "Text"
-    },
-    CreateRequestDTO: {
-        text: "Texto"
-    },
-    StoreRequest:{
-        id: '98ec6545-23d1-4d9e-a565-0c7452b45a8b',
-        createdAt: "DateTime",
-        userId: "8cdebdfd-122c-4b03-af73-1009a621dfd4",
-        status: "Aprovado",
-        text: "Texto"
-    },
-    StoreRequestWithUser:{
-        id: '98ec6545-23d1-4d9e-a565-0c7452b45a8b',
-        createdAt: "DateTime",
-        userId: "8cdebdfd-122c-4b03-af73-1009a621dfd4",
-        status: "Aprovado",
-        text: "Texto",
-        user:{
+        assigned:{
           id: "8cdebdfd-122c-4b03-af73-1009a621dfd4",
-          name: "Fulano de Tal",
-          email: "email@example.com"
-        }
+          name: "Fulano de Tal"
+        },
+        status: "Info Needed",
+        severity: "Low",
+        category: "CWE-120"
+    },
+    CreateFindingDTO:{
+        id: '98ec6545-23d1-4d9e-a565-0c7452b45a8b',
+        title: "Text",
+        solution: "Text",
+        description: "Text",
+        assignedId:"49389be7-c132-452c-a2d3-80c7a6fdf790",
+        statusId: "6ed9435f-685b-4607-a6a3-c9a00f80448a",
+        severityId: "3491ec2f-f2dc-4b7b-8cea-47155d2d6087",
+        categoryId: "2a97ec94-d91c-49bc-95c5-42decebc0a88"
+    },
+    MediaDTO: "Binary",
+    Media:{
+      id: "a8c2c506-9039-40e2-8071-15501d60e4c7",
+      link: "https://link.to.file",
+      createdAt: "DateTime"
+    },
+    FindingSeverity: {
+        id: "67844d85-407c-4cea-996b-2b92618e6be3",
+        name: "Low"
+    },
+    FindingType: {
+        id: "416efad4-db77-4150-8fba-cd3c2759cca3",
+        name: "CWE-120"
+    },
+    FindingStatus: {
+        id: "6cfaa2a3-d2ca-434a-ba26-a2936d2c6732",
+        name: "Info Needed"
+    },
+    Notification:{
+        id: '98ec6545-23d1-4d9e-a565-0c7452b45a8b',
+        content: "Text",
+        receiverId: "8cdebdfd-122c-4b03-af73-1009a621dfd4",
+        read: true
+    },
+    ProjectDTO:{
+        title: "Text",
+        description: "Text",
+    },
+    Project:{
+      id: '98ec6545-23d1-4d9e-a565-0c7452b45a8b',
+      title: "Text",
+      description: "Text",
+      creatorId: "8cdebdfd-122c-4b03-af73-1009a621dfd4",
+      createdAt: "DateTime",
+      updatedAt: "DateTime",
     },
     CreateUserDTO: {
         email: "email@example.com",
         name: "Fulano de Tal",
-        password: "SenhaForte", 
-        userTypeId: "7d1f6344-af5f-4cc3-bcc1-f0e3e35d4360"
+        password: "SenhaForte"
     },
     UpdateUserDTO: {
         email: "email@example.com",
@@ -97,14 +102,12 @@ const doc = {
         password: "Optional", 
         userTypeId: "Optional"
     },
-    RoleDTO: {
+    UserDTO: {
+      id: "f0a39296-e785-4567-a2ae-1d7e52e04689",
+      email: "email@example.com",
       name: "Fulano de Tal",
-      role: "client"
-    },
-    Participant: {
-      userId: "2179db3e-6f49-4940-9345-61c001a30623",
-      eventId: "3f8946e1-ed6f-48b0-9087-4ddc6b0a11cc",
-      role: "Spectator"
+      createdAt: "DateTime",
+      updatedAt: "DateTime",
     }
 
   },

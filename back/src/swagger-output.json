@@ -1,0 +1,1497 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API do GlRA",
+    "description": "Documentação da API",
+    "version": "1.0"
+  },
+  "host": "localhost:3333",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/v1/auth/signup": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Usuário é criado e faz Login.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SignUpDto"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New user created"
+          },
+          "400": {
+            "description": "Email informado já está sendo usado."
+          },
+          "422": {
+            "description": "Body inválido."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Usuário faz Login.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AuthDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Auth"
+            },
+            "description": "OK"
+          },
+          "401": {
+            "description": "Usuário ou senha incorretos."
+          },
+          "422": {
+            "description": "Body inválido."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Usuário faz Logout.",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Usuário não logado."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/finding/p/{projectId}": {
+      "get": {
+        "tags": [
+          "Achados"
+        ],
+        "summary": "Recupera dados de todos os achados de um projeto.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ProjecId",
+            "description": "ID do projeto",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FindingPublic"
+              },
+              "xml": {
+                "name": "main"
+              }
+            },
+            "description": "OK"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um projeto com o id informado."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/finding/{findingId}": {
+      "get": {
+        "tags": [
+          "Achados"
+        ],
+        "summary": "Recupera dados de um achado específico.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "findingId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do achado"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/FindingPublic"
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um achado com o id informado."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Achados"
+        ],
+        "summary": "Atualiza um achado no projeto.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "findingId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do achado"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateFindingDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Achado atualizado"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um achado com o id informado."
+          },
+          "422": {
+            "description": "Body inválido."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Achados"
+        ],
+        "summary": "Remove um achado na base.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "findingId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do achado"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Achado Removido"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um achado com o id informado."
+          },
+          "422": {
+            "description": "Body inválido."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/finding/": {
+      "post": {
+        "tags": [
+          "Achados"
+        ],
+        "summary": "Adiciona um novo achado no projeto.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateFindingDTO"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Achado Criado"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "422": {
+            "description": "Body inválido."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/findingSeverity/": {
+      "get": {
+        "tags": [
+          "Severidade de Achados"
+        ],
+        "summary": "Recupera dados de todas as severiades de achado.",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FindingSeverity"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/findingStatus/": {
+      "get": {
+        "tags": [
+          "Status de Achados"
+        ],
+        "summary": "Recupera dados de todos os status de achado.",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FindingStatus"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/findingTypes/": {
+      "get": {
+        "tags": [
+          "Tipos de Achados"
+        ],
+        "summary": "Recupera dados de todos os tipos de achado.",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FindingType"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/notification/": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Recupera todas as notificações do usuário logado.",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notification"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/notification/{notificationId}": {
+      "put": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Atualiza uma notificação na base.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "notificationId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da notificação"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notificação Atualizada"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um projeto com o id informado."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Remove uma notificação na base.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "notificationId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "NotificationId",
+            "description": "ID da notificação",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notificação Removida"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe uma notificação com o id informado."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/media/": {
+      "post": {
+        "tags": [
+          "Mídia"
+        ],
+        "summary": "Adiciona um novo arquivo na base.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "Arquivo de mídia a ser adicionado.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          {
+            "name": "content-type",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/Media"
+            },
+            "description": "Created"
+          },
+          "403": {
+            "description": "User unautorized."
+          }
+        }
+      }
+    },
+    "/v1/media/index/{findingId}": {
+      "get": {
+        "tags": [
+          "Mídia"
+        ],
+        "summary": "Recupera todas as mídias do achado.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "findingId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do achado"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Media"
+              },
+              "xml": {
+                "name": "main"
+              }
+            },
+            "description": "OK"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um achado com o id informado."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/media/{findingId}": {
+      "post": {
+        "tags": [
+          "Mídia"
+        ],
+        "summary": "Adiciona um novo arquivo na base.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "findingId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do achado"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "Arquivo de mídia a ser adicionado.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          {
+            "name": "content-type",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/Media"
+            },
+            "description": "Created"
+          },
+          "403": {
+            "description": "User unautorized."
+          }
+        }
+      }
+    },
+    "/v1/media/{mediaId}": {
+      "delete": {
+        "tags": [
+          "Mídia"
+        ],
+        "summary": "Remove uma mídia na base.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "mediaId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID da mídia"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mídia Removida"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe uma mídia com o id informado."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/media/{id}": {
+      "get": {
+        "tags": [
+          "Mídia"
+        ],
+        "summary": "Recupera um arquivo da base.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do arquivo a ser recuperado."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/MediaDTO"
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          }
+        }
+      }
+    },
+    "/v1/project/": {
+      "get": {
+        "tags": [
+          "Projetos"
+        ],
+        "summary": "Recupera todos os projetos do usuário logado.",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Project"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Projetos"
+        ],
+        "summary": "Adiciona um novo projeto na base.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ProjectDTO"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Projeto Criado"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "422": {
+            "description": "Body inválido."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/project/{projectId}": {
+      "put": {
+        "tags": [
+          "Projetos"
+        ],
+        "summary": "Atualiza um projeto na base.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ProjecId",
+            "description": "ID do projeto",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ProjectDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Projeto Atualizado"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "422": {
+            "description": "Body inválido."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Projetos"
+        ],
+        "summary": "Remove um projeto na base.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ProjecId",
+            "description": "ID do projeto",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Projeto Removido"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um projeto com o id informado."
+          },
+          "422": {
+            "description": "Body inválido."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Projetos"
+        ],
+        "summary": "Recupera dados de um projeto específico.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do projeto"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um projeto com o id informado."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/projectAccess/": {
+      "get": {
+        "tags": [
+          "Project Access"
+        ],
+        "summary": "Lista os projetos que o usuário logado tem acesso.",
+        "description": "",
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProjectDTO"
+              },
+              "xml": {
+                "name": "main"
+              }
+            },
+            "description": "OK"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um usuário com o id informado."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/projectAccess/p/{projectId}/u/{UserId}": {
+      "post": {
+        "tags": [
+          "Project Access"
+        ],
+        "summary": "Adiciona um novo usuário no projeto.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ProjectId",
+            "description": "ID do projeto",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "userId",
+            "description": "ID do usuário a ser adicionado",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Usuário Adicionado"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "409": {
+            "description": "Já existe um usuário com o id informado neste projeto."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Project Access"
+        ],
+        "summary": "Remove um usuário de um projeto.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ProjectId",
+            "description": "ID do projeto",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "userId",
+            "description": "ID do usuário a ser adicionado",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário removido"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um projeto com o id informado ou usuário já não tem acesso."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/projectAccess/{projectId}": {
+      "get": {
+        "tags": [
+          "Project Access"
+        ],
+        "summary": "Lista os usuários com acesso a um projeto.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ProjectId",
+            "description": "ID do projeto",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserDTO"
+              },
+              "xml": {
+                "name": "main"
+              }
+            },
+            "description": "OK"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um projeto com o id informado."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/user/": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Recupera dados de todos os usuários.",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserDTO"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/user/checkemail/{email}": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Verifica se um email já está cadastrado.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Email a ser verificado"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "true se o email já está cadastrado, false caso contrário",
+            "type": "boolean"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Recupera dados de um usuário específico.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do usuário"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UserDTO"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Atualiza os dados de um usuário específico.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do usuário"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UpadateUserDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UserDTO"
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um usuário com o id informado."
+          },
+          "422": {
+            "description": "Body inválido."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Remove os dados de um usuário específico.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do usuário"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User deleted."
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Auth": {
+      "type": "object",
+      "properties": {
+        "msg": {
+          "type": "string",
+          "example": "Usuário autenticado"
+        }
+      }
+    },
+    "AuthDTO": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "email@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "SenhaMuitoForte"
+        }
+      }
+    },
+    "SignUpDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Fulano de Tal"
+        },
+        "email": {
+          "type": "string",
+          "example": "email@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "SenhaMuitoForte"
+        }
+      }
+    },
+    "LoginDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "98ec6545-23d1-4d9e-a565-0c7452b45a8b"
+        },
+        "name": {
+          "type": "string",
+          "example": "Fulano de Tal"
+        },
+        "email": {
+          "type": "string",
+          "example": "email@example.com"
+        }
+      }
+    },
+    "FindingPublic": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "98ec6545-23d1-4d9e-a565-0c7452b45a8b"
+        },
+        "reporter": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "8cdebdfd-122c-4b03-af73-1009a621dfd4"
+            },
+            "name": {
+              "type": "string",
+              "example": "Fulano de Tal"
+            }
+          }
+        },
+        "title": {
+          "type": "string",
+          "example": "Text"
+        },
+        "solution": {
+          "type": "string",
+          "example": "Text"
+        },
+        "description": {
+          "type": "string",
+          "example": "Text"
+        },
+        "assigned": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "8cdebdfd-122c-4b03-af73-1009a621dfd4"
+            },
+            "name": {
+              "type": "string",
+              "example": "Fulano de Tal"
+            }
+          }
+        },
+        "status": {
+          "type": "string",
+          "example": "Info Needed"
+        },
+        "severity": {
+          "type": "string",
+          "example": "Low"
+        },
+        "category": {
+          "type": "string",
+          "example": "CWE-120"
+        }
+      }
+    },
+    "CreateFindingDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "98ec6545-23d1-4d9e-a565-0c7452b45a8b"
+        },
+        "title": {
+          "type": "string",
+          "example": "Text"
+        },
+        "solution": {
+          "type": "string",
+          "example": "Text"
+        },
+        "description": {
+          "type": "string",
+          "example": "Text"
+        },
+        "assignedId": {
+          "type": "string",
+          "example": "49389be7-c132-452c-a2d3-80c7a6fdf790"
+        },
+        "statusId": {
+          "type": "string",
+          "example": "6ed9435f-685b-4607-a6a3-c9a00f80448a"
+        },
+        "severityId": {
+          "type": "string",
+          "example": "3491ec2f-f2dc-4b7b-8cea-47155d2d6087"
+        },
+        "categoryId": {
+          "type": "string",
+          "example": "2a97ec94-d91c-49bc-95c5-42decebc0a88"
+        }
+      }
+    },
+    "MediaDTO": {
+      "type": "string",
+      "example": "Binary"
+    },
+    "Media": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "a8c2c506-9039-40e2-8071-15501d60e4c7"
+        },
+        "link": {
+          "type": "string",
+          "example": "https://link.to.file"
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "DateTime"
+        }
+      }
+    },
+    "FindingSeverity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "67844d85-407c-4cea-996b-2b92618e6be3"
+        },
+        "name": {
+          "type": "string",
+          "example": "Low"
+        }
+      }
+    },
+    "FindingType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "416efad4-db77-4150-8fba-cd3c2759cca3"
+        },
+        "name": {
+          "type": "string",
+          "example": "CWE-120"
+        }
+      }
+    },
+    "FindingStatus": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "6cfaa2a3-d2ca-434a-ba26-a2936d2c6732"
+        },
+        "name": {
+          "type": "string",
+          "example": "Info Needed"
+        }
+      }
+    },
+    "Notification": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "98ec6545-23d1-4d9e-a565-0c7452b45a8b"
+        },
+        "content": {
+          "type": "string",
+          "example": "Text"
+        },
+        "receiverId": {
+          "type": "string",
+          "example": "8cdebdfd-122c-4b03-af73-1009a621dfd4"
+        },
+        "read": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "ProjectDTO": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Text"
+        },
+        "description": {
+          "type": "string",
+          "example": "Text"
+        }
+      }
+    },
+    "Project": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "98ec6545-23d1-4d9e-a565-0c7452b45a8b"
+        },
+        "title": {
+          "type": "string",
+          "example": "Text"
+        },
+        "description": {
+          "type": "string",
+          "example": "Text"
+        },
+        "creatorId": {
+          "type": "string",
+          "example": "8cdebdfd-122c-4b03-af73-1009a621dfd4"
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "DateTime"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "DateTime"
+        }
+      }
+    },
+    "CreateUserDTO": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "email@example.com"
+        },
+        "name": {
+          "type": "string",
+          "example": "Fulano de Tal"
+        },
+        "password": {
+          "type": "string",
+          "example": "SenhaForte"
+        }
+      }
+    },
+    "UpdateUserDTO": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "email@example.com"
+        },
+        "name": {
+          "type": "string",
+          "example": "Fulano de Tal"
+        },
+        "password": {
+          "type": "string",
+          "example": "Optional"
+        },
+        "userTypeId": {
+          "type": "string",
+          "example": "Optional"
+        }
+      }
+    },
+    "UserDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "f0a39296-e785-4567-a2ae-1d7e52e04689"
+        },
+        "email": {
+          "type": "string",
+          "example": "email@example.com"
+        },
+        "name": {
+          "type": "string",
+          "example": "Fulano de Tal"
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "DateTime"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "DateTime"
+        }
+      }
+    }
+  }
+}
