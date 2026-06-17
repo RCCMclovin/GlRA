@@ -112,6 +112,7 @@ const remove = async (req: Request, res: Response) => {
 */
  try {
    const project = await projectService.findProjectsById(req.params.projectId as string) as Project;
+   //console.log(project);
     if(project){
         await projectService.remove(project.id);
         return res.status(StatusCodes.OK).send(ReasonPhrases.OK);

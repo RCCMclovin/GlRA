@@ -28,6 +28,7 @@ async function update(id: string, data: ProjectDTO): Promise<Project>{
 }
 
 async function remove(id: string): Promise<void>{
+  await prisma.accessProject.deleteMany({where:{projectId: id}});
   await prisma.project.delete({where:{id}});
 }
 
