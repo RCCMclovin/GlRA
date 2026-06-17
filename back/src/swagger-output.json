@@ -275,6 +275,9 @@
           "403": {
             "description": "User unautorized."
           },
+          "406": {
+            "description": "Não existe um achado com o id informado."
+          },
           "422": {
             "description": "Body inválido."
           },
@@ -721,13 +724,8 @@
             "name": "projectId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "ProjecId",
-            "description": "ID do projeto",
-            "in": "query",
-            "type": "string"
+            "type": "string",
+            "description": "ID do projeto"
           },
           {
             "name": "body",
@@ -763,13 +761,8 @@
             "name": "projectId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "ProjecId",
-            "description": "ID do projeto",
-            "in": "query",
-            "type": "string"
+            "type": "string",
+            "description": "ID do projeto"
           }
         ],
         "responses": {

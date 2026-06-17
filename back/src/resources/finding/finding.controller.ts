@@ -9,6 +9,8 @@ import projectService from '../project/project.service';
 import { CreateFindingDTO, FindingPublic } from './finding.types';
 import userService from '../user/user.service';
 import { Finding } from '../../generated/prisma/browser';
+import projectAccessService from '../projectAccess/projectAccess.service';
+import notificationService from '../notification/notification.service';
 
 const index = async (req: Request, res: Response) => {
   /*
@@ -46,7 +48,7 @@ const index = async (req: Request, res: Response) => {
                 assigned: await userService.toCard(f.assignedId),
             }
             findings.push(public_fiding);
-          })
+          });
           return res.status(StatusCodes.OK).json(findings);
       }else{
           return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);
@@ -112,6 +114,9 @@ const create = async (req: Request, res: Response) => {
  #swagger.responses[403] = {
  description: 'User unautorized.'
  }
+ #swagger.responses[406] = {
+ description:  'Não existe um achado com o id informado.'
+ }
  #swagger.responses[422] = {
  description:  'Body inválido.'
  }
@@ -121,8 +126,19 @@ const create = async (req: Request, res: Response) => {
 */
   const finding = req.body as CreateFindingDTO;
   try {
-    await findingService.create(finding, req.session.uid as string);
-    return res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
+    const project = await projectService.findProjectsById(finding.projectId);
+    if(project){
+      await findingService.create(finding, req.session.uid as string);
+      (await projectAccessService.listUsersByProject(finding.projectId)).forEach((u)=>{
+            if(u.userId != req.session.uid){
+              notificationService.create(u.userId, `Um novo achado foi adicionado no projeto ${project.title}`);
+            }
+          })
+      return res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
+    }else{
+      return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);
+    }
+    
   } catch (e) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
   }
@@ -155,9 +171,15 @@ const update = async (req: Request, res: Response) => {
 */
   const new_finding = req.body as CreateFindingDTO;
   try {
-    const finding = await findingService.read(req.params.findingId as string);
+    const finding = await findingService.read(req.params.findingId as string) as CreateFindingDTO;
+    const project = await projectService.findProjectsById(finding.projectId) as Project;
     if(finding){
         await findingService.update(req.params.findingId as string, new_finding);
+        (await projectAccessService.listUsersByProject(finding.projectId)).forEach((u)=>{
+            if(u.userId != req.session.uid){
+              notificationService.create(u.userId, `Um achado foi atualizado no projeto ${project.title}`);
+            }
+          })
         return res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
     }else{
         return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);

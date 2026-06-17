@@ -5,6 +5,8 @@ import { UserDTO } from '../user/user.types';
 import projectService from '../project/project.service';
 import userService from '../user/user.service';
 import { ProjectDTO } from '../project/project.types';
+import notificationService from '../notification/notification.service';
+import { Project } from '../../generated/prisma/client';
 
 const grant = async (req: Request, res: Response) => {
   /*
@@ -30,7 +32,9 @@ const grant = async (req: Request, res: Response) => {
   try {
     const exists: boolean = await projectAccessService.hasAccess(project, newUser);
     if (!exists) {
+      const projectInfo = await projectService.findProjectsById(project) as Project;
       await projectAccessService.grantAccess(project, newUser);
+      notificationService.create(newUser, `Você foi adicionado no projeto ${projectInfo.title}`);
       return res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
     } else {
       return res.status(StatusCodes.CONFLICT).send(ReasonPhrases.CONFLICT);
@@ -63,7 +67,9 @@ const remove = async (req: Request, res: Response) => {
   try {
     const exists: boolean = await projectAccessService.hasAccess(project, newUser);
     if (exists) {
+      const projectInfo = await projectService.findProjectsById(project) as Project;
       await projectAccessService.removeAccess(project, newUser);
+      notificationService.create(newUser, `Você foi removido do projeto ${projectInfo.title}`);
       return res.status(StatusCodes.OK).send(ReasonPhrases.OK);
     } else {
       return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);

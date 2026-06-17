@@ -62,7 +62,7 @@ const update = async (req: Request, res: Response) => {
   /*
  #swagger.tags = ["Projetos"]
  #swagger.summary = 'Atualiza um projeto na base.'
- #swagger.parameters['ProjecId'] = { description: 'ID do projeto' }
+ #swagger.parameters['projectId'] = { description: 'ID do projeto' }
  #swagger.parameters['body'] = {
  in: 'body',
  schema: { $ref: '#/definitions/ProjectDTO' }
@@ -93,7 +93,7 @@ const remove = async (req: Request, res: Response) => {
   /*
  #swagger.tags = ["Projetos"]
  #swagger.summary = 'Remove um projeto na base.'
- #swagger.parameters['ProjecId'] = { description: 'ID do projeto' }
+ #swagger.parameters['projectId'] = { description: 'ID do projeto' }
  #swagger.responses[200] = {
  description: 'Projeto Removido'
  }
