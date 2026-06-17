@@ -4,7 +4,7 @@ import projectAccessService from '../resources/projectAccess/projectAccess.servi
 
 async function hasAccess(req: Request, res: Response, next: NextFunction) {
   const project = req.params.projectId as string;
-  if(req.session.uid && !(await projectAccessService.hasAccess(project, req.session.uid))){
+  if(!req.session.uid || !(await projectAccessService.hasAccess(project, req.session.uid))){
     return res.status(StatusCodes.FORBIDDEN).send(ReasonPhrases.FORBIDDEN);
   } else next();
 }
