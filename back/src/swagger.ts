@@ -53,7 +53,8 @@ const doc = {
         assignedId:"49389be7-c132-452c-a2d3-80c7a6fdf790",
         statusId: "6ed9435f-685b-4607-a6a3-c9a00f80448a",
         severityId: "3491ec2f-f2dc-4b7b-8cea-47155d2d6087",
-        categoryId: "2a97ec94-d91c-49bc-95c5-42decebc0a88"
+        categoryId: "2a97ec94-d91c-49bc-95c5-42decebc0a88",
+        projectId: "36a3ab3f-0e04-4cba-aa3d-ba35a3a9ab87"
     },
     MediaDTO: "Binary",
     Media:{

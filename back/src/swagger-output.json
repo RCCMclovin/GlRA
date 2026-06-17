@@ -1268,6 +1268,10 @@
         "categoryId": {
           "type": "string",
           "example": "2a97ec94-d91c-49bc-95c5-42decebc0a88"
+        },
+        "projectId": {
+          "type": "string",
+          "example": "36a3ab3f-0e04-4cba-aa3d-ba35a3a9ab87"
         }
       }
     },
