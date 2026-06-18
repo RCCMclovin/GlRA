@@ -128,6 +128,10 @@ const create = async (req: Request, res: Response) => {
   try {
     const project = await projectService.findProjectsById(finding.projectId);
     if(project){
+      const assignedAccess = (await projectAccessService.hasAccess(finding.projectId, finding.assignedId));
+      if(!assignedAccess){
+        return res.status(StatusCodes.FORBIDDEN).send("Assigned user has no access");
+      }
       await findingService.create(finding, req.session.uid as string);
       await Promise.all((await projectAccessService.listUsersByProject(finding.projectId)).map((u)=>{
             if(u.userId != req.session.uid){
