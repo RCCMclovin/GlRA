@@ -1241,10 +1241,6 @@
     "CreateFindingDTO": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string",
-          "example": "98ec6545-23d1-4d9e-a565-0c7452b45a8b"
-        },
         "title": {
           "type": "string",
           "example": "Text"
