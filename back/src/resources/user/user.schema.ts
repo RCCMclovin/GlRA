@@ -7,6 +7,5 @@ export const userSchema = Joi.object().keys({
 });
 
 export const SearchUserSchema = Joi.object().keys({
-  name: Joi.string().max(40),
-  email: Joi.string(),
+  str: Joi.string().max(40).required(),
 });

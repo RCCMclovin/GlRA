@@ -129,8 +129,7 @@ const doc = {
       updatedAt: "DateTime",
     },
     SearchUser: {
-      email: "Optional",
-      name: "Optional"
+      str: "Nome ou email"
     }
 
   },

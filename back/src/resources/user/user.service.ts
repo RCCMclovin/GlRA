@@ -1,5 +1,4 @@
 import { PrismaClient, User } from '../../generated/prisma/client';
-import { UserWhereInput } from '../../generated/prisma/models';
 import { CreateUserDTO, UserDTO, UpdateUserDTO, CardUser, SearchUser } from './user.types';
 import { genSalt, hash } from 'bcryptjs';
 
@@ -75,18 +74,13 @@ async function toCard(id: string): Promise<CardUser>{
 }
 
 async function search(data: SearchUser): Promise<User[]>{
-  const where: UserWhereInput = {};
-  if("name" in data){
-    where.name = {contains:data.name};
-  }else{
-    if("email" in data){
-      where.email = {contains:data.email};
-    }
-  }
-  if(!("name" in data) && !("email" in data)){
-    return []
-  }
-  return await prisma.user.findMany({where:where});
+  const users = await prisma.user.findMany({where:{name:{contains:data.str}}})
+  return await Promise.all((await prisma.user.findMany({where:{email:{contains:data.str}}}))
+  .map((u) =>{
+    const isIncluded: boolean = users.map(obj => (JSON.stringify(obj)))
+    .includes(JSON.stringify(u));
+    if(!isIncluded) users.push(u);
+  })).then(() => {return users});
 }
 
 export default {

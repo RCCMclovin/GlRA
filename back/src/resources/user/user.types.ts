@@ -15,6 +15,5 @@ export type UserDTO = Omit<User, 'password'>;
 export type CardUser = Pick<User, 'id' | 'name'>;
 
 export type SearchUser = {
-  email?:string,
-  name?: string
+  str: string
 }

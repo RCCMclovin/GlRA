@@ -1622,13 +1622,9 @@
     "SearchUser": {
       "type": "object",
       "properties": {
-        "email": {
+        "str": {
           "type": "string",
-          "example": "Optional"
-        },
-        "name": {
-          "type": "string",
-          "example": "Optional"
+          "example": "Nome ou email"
         }
       }
     }
