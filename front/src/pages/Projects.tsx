@@ -21,16 +21,15 @@ export function Projects({ projects, users, onNavigate, onOpenProject }: Project
 
       <div className="cards-grid">
         {projects.map((project) => {
-          const owner = users.find((user) => user.id === project.ownerId);
+          const owner = users.find((user) => user.id === project.creatorId);
           return (
             <article className="project-card" key={project.id}>
-              <small>{project.id}</small>
+              <small>{project.id.slice(0, 8)}</small>
               <h2>{project.title}</h2>
               <p>{project.description}</p>
               <dl>
-                <div><dt>Proprietário</dt><dd>{owner?.name}</dd></div>
-                <div><dt>Criado em</dt><dd>{project.createdAt}</dd></div>
-                <div><dt>Participantes</dt><dd>{project.participantIds.length}</dd></div>
+                <div><dt>Proprietário</dt><dd>{owner?.name ?? '—'}</dd></div>
+                <div><dt>Criado em</dt><dd>{new Date(project.createdAt).toLocaleDateString('pt-BR')}</dd></div>
               </dl>
               <button className="ghost-button full-width" onClick={() => onOpenProject(project.id)}>
                 Abrir projeto

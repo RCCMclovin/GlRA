@@ -1,18 +1,32 @@
+import { useState } from 'react';
 import type { User } from '../types';
 
 type UsersPageProps = {
   users: User[];
-  onCreateUser: (user: User) => void;
+  onCreateUser: (data: { name: string; email: string; password: string }) => Promise<void>;
 };
 
 export function UsersPage({ users, onCreateUser }: UsersPageProps) {
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSaving(true);
+    setError('');
     const form = new FormData(event.currentTarget);
-    const name = String(form.get('name'));
-    const email = String(form.get('email'));
-    onCreateUser({ id: `u${Math.floor(Math.random() * 900 + 100)}`, name, email });
-    event.currentTarget.reset();
+    try {
+      await onCreateUser({
+        name: String(form.get('name')),
+        email: String(form.get('email')),
+        password: String(form.get('password')),
+      });
+      event.currentTarget.reset();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Erro ao cadastrar usuário.');
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -21,7 +35,7 @@ export function UsersPage({ users, onCreateUser }: UsersPageProps) {
         <div>
           <span className="eyebrow">Usuários</span>
           <h1>Usuários do sistema</h1>
-          <p>Base visual para cadastro de usuários, participantes e responsáveis.</p>
+          <p>Cadastro de usuários, participantes e responsáveis.</p>
         </div>
       </header>
 
@@ -31,11 +45,11 @@ export function UsersPage({ users, onCreateUser }: UsersPageProps) {
           <div className="table-wrap">
             <table>
               <thead>
-                <tr><th>ID</th><th>Nome</th><th>E-mail</th></tr>
+                <tr><th>Nome</th><th>E-mail</th></tr>
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr key={user.id}><td>{user.id}</td><td>{user.name}</td><td>{user.email}</td></tr>
+                  <tr key={user.id}><td>{user.name}</td><td>{user.email}</td></tr>
                 ))}
               </tbody>
             </table>
@@ -52,7 +66,14 @@ export function UsersPage({ users, onCreateUser }: UsersPageProps) {
             E-mail
             <input name="email" type="email" placeholder="usuario@gira.local" required />
           </label>
-          <button className="primary-button" type="submit">Salvar usuário</button>
+          <label>
+            Senha
+            <input name="password" type="password" placeholder="Mínimo 3 caracteres" minLength={3} required />
+          </label>
+          {error && <small style={{ color: 'var(--red)' }}>{error}</small>}
+          <button className="primary-button" type="submit" disabled={saving}>
+            {saving ? 'Salvando...' : 'Salvar usuário'}
+          </button>
         </form>
       </div>
     </section>

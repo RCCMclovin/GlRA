@@ -229,6 +229,7 @@ dd { margin: 4px 0 0; line-height: 1.45; }
 .full-row { grid-column: 1 / -1; }
 .form-actions { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
 .filter-row { display: grid; grid-template-columns: 1fr 180px 180px; gap: 12px; margin-bottom: 16px; }
+.filter-row-extended { display: grid; grid-template-columns: 1fr 160px 160px 160px auto; gap: 12px; margin-bottom: 16px; align-items: end; }
 .participants-box {
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -289,6 +290,7 @@ dd { margin: 4px 0 0; line-height: 1.45; }
   .users-layout,
   .form-card.two-columns { grid-template-columns: 1fr; }
   .filter-row { grid-template-columns: 1fr; }
+  .filter-row-extended { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 760px) {

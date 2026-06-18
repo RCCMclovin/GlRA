@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { FindingDetails } from './pages/FindingDetails';
@@ -10,19 +10,73 @@ import { ProjectDetails } from './pages/ProjectDetails';
 import { ProjectForm } from './pages/ProjectForm';
 import { Projects } from './pages/Projects';
 import { UsersPage } from './pages/UsersPage';
-import { findings as initialFindings, notifications as initialNotifications, projects as initialProjects, users as initialUsers } from './data/mockData';
-import type { Finding, FindingStatus, Project, User, View } from './types';
+import * as api from './api';
+import type { Finding, Lookup, Notification, Project, User, View } from './types';
 
 function App() {
   const [view, setView] = useState<View>('login');
-  const [users, setUsers] = useState<User[]>(initialUsers);
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
-  const [findings, setFindings] = useState<Finding[]>(initialFindings);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [findings, setFindings] = useState<Finding[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [severities, setSeverities] = useState<Lookup[]>([]);
+  const [statuses, setStatuses] = useState<Lookup[]>([]);
+  const [categories, setCategories] = useState<Lookup[]>([]);
+
   const [selectedFindingId, setSelectedFindingId] = useState<string | undefined>();
   const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>();
-  const [notifications] = useState(initialNotifications);
+  const [loading, setLoading] = useState(false);
 
-  const unreadNotifications = useMemo(() => notifications.filter((item) => !item.read).length, [notifications]);
+  const unreadNotifications = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
+
+  const loadAllData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [projectsData, notificationsData, severitiesData, statusesData, categoriesData] = await Promise.all([
+        api.getMyProjects(),
+        api.getNotifications(),
+        api.getSeverities(),
+        api.getStatuses(),
+        api.getCategories(),
+      ]);
+      setProjects(projectsData);
+      setNotifications(notificationsData);
+      setSeverities(severitiesData);
+      setStatuses(statusesData);
+      setCategories(categoriesData);
+
+      const allFindings = (await Promise.all(
+        projectsData.map((p) => api.getProjectFindings(p.id).catch(() => []))
+      )).flat();
+      setFindings(allFindings);
+
+      try {
+        setUsers(await api.getUsers());
+      } catch {
+        /* user list route may be restricted */
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  async function handleLogin(user: User) {
+    setCurrentUser(user);
+    await loadAllData();
+    setView('dashboard');
+  }
+
+  async function handleLogout() {
+    try { await api.apiLogout(); } catch { /* ignore */ }
+    setCurrentUser(null);
+    setProjects([]);
+    setFindings([]);
+    setNotifications([]);
+    setUsers([]);
+    setView('login');
+  }
 
   function handleOpenDetails(id: string) {
     setSelectedFindingId(id);
@@ -34,53 +88,139 @@ function App() {
     setView('project-details');
   }
 
-  function handleSaveProject(project: Project) {
-    setProjects((current) => {
-      const exists = current.some((item) => item.id === project.id);
-      return exists ? current.map((item) => item.id === project.id ? project : item) : [project, ...current];
+  async function handleSaveProject(data: { title: string; description: string }, projectId?: string) {
+    if (projectId) {
+      await api.updateProject(projectId, data);
+    } else {
+      await api.createProject(data);
+    }
+    await loadAllData();
+    setView('projects');
+  }
+
+  async function handleSaveFinding(payload: api.CreateFindingPayload | api.UpdateFindingPayload, findingId?: string) {
+    if (findingId) {
+      await api.updateFinding(findingId, payload as api.UpdateFindingPayload);
+    } else {
+      await api.createFinding(payload as api.CreateFindingPayload);
+    }
+    await loadAllData();
+    setView('findings');
+  }
+
+  async function handleUpdateStatus(findingId: string, statusId: string) {
+    const finding = findings.find((f) => f.id === findingId);
+    if (!finding) return;
+    const severityLookup = severities.find((s) => s.name === finding.severity);
+    const categoryLookup = categories.find((c) => c.name === finding.category);
+    await api.updateFinding(findingId, {
+      title: finding.title,
+      solution: finding.solution,
+      description: finding.description,
+      assignedId: finding.assigned.id,
+      statusId,
+      severityId: severityLookup?.id ?? '',
+      categoryId: categoryLookup?.id ?? '',
     });
-    setSelectedProjectId(project.id);
-    setView('project-details');
+    await loadAllData();
   }
 
-  function handleSaveFinding(finding: Finding) {
-    setFindings((current) => {
-      const exists = current.some((item) => item.id === finding.id);
-      return exists ? current.map((item) => item.id === finding.id ? finding : item) : [finding, ...current];
-    });
-    setSelectedFindingId(finding.id);
-    setSelectedProjectId(finding.projectId);
-    setView('finding-details');
+  async function handleCreateUser(data: { name: string; email: string; password: string }) {
+    await api.createUser(data);
+    try { setUsers(await api.getUsers()); } catch { /* ignore */ }
   }
 
-  function handleCreateUser(user: User) {
-    setUsers((current) => [user, ...current]);
-  }
-
-  function handleUpdateStatus(id: string, status: FindingStatus) {
-    setFindings((current) => current.map((item) => item.id === id ? { ...item, status } : item));
+  async function handleToggleNotification(id: number) {
+    await api.toggleNotificationRead(id);
+    setNotifications(await api.getNotifications());
   }
 
   if (view === 'login') {
-    return <Login onLogin={() => setView('dashboard')} />;
+    return <Login onLogin={handleLogin} />;
   }
 
-  const selectedFinding = findings.find((finding) => finding.id === selectedFindingId);
-  const selectedProject = projects.find((project) => project.id === selectedProjectId);
+  if (loading) {
+    return (
+      <Layout view={view} unreadNotifications={0} onNavigate={setView} onLogout={handleLogout}>
+        <section className="empty-state"><h1>Carregando...</h1></section>
+      </Layout>
+    );
+  }
+
+  const selectedFinding = findings.find((f) => f.id === selectedFindingId);
+  const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
   return (
-    <Layout view={view} unreadNotifications={unreadNotifications} onNavigate={setView} onLogout={() => setView('login')}>
-      {view === 'dashboard' && <Dashboard currentUserId="u1" findings={findings} projects={projects} users={users} notifications={notifications} onNavigate={setView} onOpenProject={handleOpenProject} onOpenFinding={handleOpenDetails} />}
-      {view === 'projects' && <Projects projects={projects} users={users} onNavigate={setView} onOpenProject={handleOpenProject} />}
-      {view === 'project-details' && <ProjectDetails project={selectedProject} findings={findings} users={users} onNavigate={setView} onOpenFinding={handleOpenDetails} />}
-      {view === 'new-project' && <ProjectForm users={users} onSaveProject={handleSaveProject} onNavigate={setView} />}
-      {view === 'edit-project' && <ProjectForm users={users} initialProject={selectedProject} onSaveProject={handleSaveProject} onNavigate={setView} />}
-      {view === 'findings' && <Findings findings={findings} projects={projects} users={users} onNavigate={setView} onOpenDetails={handleOpenDetails} />}
-      {view === 'new-finding' && <FindingForm projects={projects} users={users} onSaveFinding={handleSaveFinding} onNavigate={setView} />}
-      {view === 'edit-finding' && <FindingForm projects={projects} users={users} initialFinding={selectedFinding} onSaveFinding={handleSaveFinding} onNavigate={setView} />}
-      {view === 'finding-details' && <FindingDetails finding={selectedFinding} projects={projects} users={users} onUpdateStatus={handleUpdateStatus} onNavigate={setView} />}
+    <Layout view={view} unreadNotifications={unreadNotifications} onNavigate={setView} onLogout={handleLogout}>
+      {view === 'dashboard' && (
+        <Dashboard
+          currentUserId={currentUser?.id ?? ''}
+          findings={findings}
+          projects={projects}
+          users={users}
+          onNavigate={setView}
+          onOpenProject={handleOpenProject}
+          onOpenFinding={handleOpenDetails}
+        />
+      )}
+      {view === 'projects' && (
+        <Projects projects={projects} users={users} onNavigate={setView} onOpenProject={handleOpenProject} />
+      )}
+      {view === 'project-details' && (
+        <ProjectDetails
+          project={selectedProject}
+          findings={findings}
+          users={users}
+          onNavigate={setView}
+          onOpenFinding={handleOpenDetails}
+        />
+      )}
+      {view === 'new-project' && (
+        <ProjectForm users={users} onSaveProject={handleSaveProject} onNavigate={setView} />
+      )}
+      {view === 'edit-project' && (
+        <ProjectForm users={users} initialProject={selectedProject} onSaveProject={handleSaveProject} onNavigate={setView} />
+      )}
+      {view === 'findings' && (
+        <Findings findings={findings} projects={projects} users={users} severities={severities} statuses={statuses} onNavigate={setView} onOpenDetails={handleOpenDetails} />
+      )}
+      {view === 'new-finding' && (
+        <FindingForm
+          projects={projects}
+          users={users}
+          severities={severities}
+          statuses={statuses}
+          categories={categories}
+          onSaveFinding={handleSaveFinding}
+          onNavigate={setView}
+        />
+      )}
+      {view === 'edit-finding' && (
+        <FindingForm
+          projects={projects}
+          users={users}
+          severities={severities}
+          statuses={statuses}
+          categories={categories}
+          initialFinding={selectedFinding}
+          onSaveFinding={handleSaveFinding}
+          onNavigate={setView}
+        />
+      )}
+      {view === 'finding-details' && (
+        <FindingDetails
+          finding={selectedFinding}
+          projects={projects}
+          users={users}
+          statuses={statuses}
+          onUpdateStatus={handleUpdateStatus}
+          onNavigate={setView}
+        />
+      )}
       {view === 'users' && <UsersPage users={users} onCreateUser={handleCreateUser} />}
-      {view === 'notifications' && <Notifications notifications={notifications} projects={projects} />}
+      {view === 'notifications' && (
+        <Notifications notifications={notifications} projects={projects} onToggleRead={handleToggleNotification} />
+      )}
     </Layout>
   );
 }

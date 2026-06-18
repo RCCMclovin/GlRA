@@ -1,17 +1,16 @@
 import { SeverityBadge, StatusBadge } from '../components/Badge';
-import type { Finding, FindingStatus, Project, User, View } from '../types';
+import type { Finding, Lookup, Project, User, View } from '../types';
 
 type FindingDetailsProps = {
   finding?: Finding;
   projects: Project[];
   users: User[];
-  onUpdateStatus: (id: string, status: FindingStatus) => void;
+  statuses: Lookup[];
+  onUpdateStatus: (findingId: string, statusId: string) => void;
   onNavigate: (view: View) => void;
 };
 
-const statuses: FindingStatus[] = ['Aberto', 'Em análise', 'Em correção', 'Corrigido', 'Aceito como risco', 'Falso positivo'];
-
-export function FindingDetails({ finding, projects, users, onUpdateStatus, onNavigate }: FindingDetailsProps) {
+export function FindingDetails({ finding, projects, statuses, onUpdateStatus, onNavigate }: FindingDetailsProps) {
   if (!finding) {
     return (
       <section className="empty-state">
@@ -22,14 +21,13 @@ export function FindingDetails({ finding, projects, users, onUpdateStatus, onNav
   }
 
   const project = projects.find((item) => item.id === finding.projectId);
-  const reporter = users.find((item) => item.id === finding.reporterId);
-  const assignee = users.find((item) => item.id === finding.assigneeId);
+  const currentStatusLookup = statuses.find((s) => s.name === finding.status);
 
   return (
     <section>
       <header className="page-header">
         <div>
-          <span className="eyebrow">{finding.id}</span>
+          <span className="eyebrow">{finding.id.slice(0, 8)}</span>
           <h1>{finding.title}</h1>
           <p>{project?.title}</p>
         </div>
@@ -49,22 +47,24 @@ export function FindingDetails({ finding, projects, users, onUpdateStatus, onNav
           <h2>Descrição</h2>
           <p>{finding.description}</p>
           <h2>Proposta de remediação</h2>
-          <p>{finding.remediation}</p>
-          <h2>Evidência</h2>
-          <p className="evidence-box">{finding.evidenceUrl}</p>
+          <p>{finding.solution}</p>
         </article>
 
         <aside className="card details-side">
           <h2>Responsabilidade</h2>
           <dl>
-            <div><dt>Reportante</dt><dd>{reporter?.name}</dd></div>
-            <div><dt>Responsável</dt><dd>{assignee?.name}</dd></div>
-            <div><dt>Criado em</dt><dd>{finding.createdAt}</dd></div>
+            <div><dt>Reportante</dt><dd>{finding.reporter.name}</dd></div>
+            <div><dt>Responsável</dt><dd>{finding.assigned.name}</dd></div>
           </dl>
           <label>
             Atualizar status
-            <select defaultValue={finding.status} onChange={(event) => onUpdateStatus(finding.id, event.target.value as FindingStatus)}>
-              {statuses.map((status) => <option key={status}>{status}</option>)}
+            <select
+              value={currentStatusLookup?.id ?? ''}
+              onChange={(e) => onUpdateStatus(finding.id, e.target.value)}
+            >
+              {statuses.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
             </select>
           </label>
         </aside>

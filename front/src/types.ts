@@ -1,6 +1,3 @@
-export type Severity = 'Crítica' | 'Alta' | 'Média' | 'Baixa' | 'Informativa';
-export type FindingStatus = 'Aberto' | 'Em análise' | 'Em correção' | 'Corrigido' | 'Aceito como risco' | 'Falso positivo';
-
 export type User = {
   id: string;
   name: string;
@@ -11,9 +8,8 @@ export type Project = {
   id: string;
   title: string;
   description: string;
+  creatorId: string;
   createdAt: string;
-  ownerId: string;
-  participantIds: string[];
 };
 
 export type Finding = {
@@ -21,22 +17,24 @@ export type Finding = {
   projectId: string;
   title: string;
   description: string;
-  createdAt: string;
-  reporterId: string;
-  severity: Severity;
-  status: FindingStatus;
-  remediation: string;
-  evidenceUrl: string;
-  assigneeId: string;
+  solution: string;
+  severity: string;
+  status: string;
   category: string;
+  reporter: { id: string; name: string };
+  assigned: { id: string; name: string };
 };
 
 export type Notification = {
-  id: string;
-  projectId: string;
-  message: string;
-  createdAt: string;
+  id: number;
+  content: string;
   read: boolean;
+  receiverId: string;
+};
+
+export type Lookup = {
+  id: string;
+  name: string;
 };
 
 export type View =

@@ -4,35 +4,29 @@ import type { Project, User, View } from '../types';
 type ProjectFormProps = {
   users: User[];
   initialProject?: Project;
-  onSaveProject: (project: Project) => void;
+  onSaveProject: (data: { title: string; description: string }, projectId?: string) => Promise<void>;
   onNavigate: (view: View) => void;
 };
 
-export function ProjectForm({ users, initialProject, onSaveProject, onNavigate }: ProjectFormProps) {
-  const [ownerId, setOwnerId] = useState(initialProject?.ownerId ?? 'u1');
-  const [participantIds, setParticipantIds] = useState<string[]>(initialProject?.participantIds ?? ['u1']);
+export function ProjectForm({ initialProject, onSaveProject, onNavigate }: ProjectFormProps) {
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
-  function toggleParticipant(userId: string) {
-    setParticipantIds((current) => current.includes(userId) ? current.filter((id) => id !== userId) : [...current, userId]);
-  }
-
-  function handleOwnerChange(userId: string) {
-    setOwnerId(userId);
-    setParticipantIds((current) => current.includes(userId) ? current : [...current, userId]);
-  }
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSaving(true);
+    setError('');
     const form = new FormData(event.currentTarget);
-    const project: Project = {
-      id: initialProject?.id ?? `PJT-${Math.floor(Math.random() * 900 + 100)}`,
-      title: String(form.get('title')),
-      description: String(form.get('description')),
-      ownerId,
-      participantIds: participantIds.length > 0 ? participantIds : [ownerId],
-      createdAt: initialProject?.createdAt ?? new Date().toISOString().slice(0, 10)
-    };
-    onSaveProject(project);
+    try {
+      await onSaveProject(
+        { title: String(form.get('title')), description: String(form.get('description')) },
+        initialProject?.id,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Erro ao salvar projeto.');
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -41,7 +35,7 @@ export function ProjectForm({ users, initialProject, onSaveProject, onNavigate }
         <div>
           <span className="eyebrow">{initialProject ? 'Edição de projeto' : 'Cadastro de projeto'}</span>
           <h1>{initialProject ? 'Editar projeto' : 'Novo projeto'}</h1>
-          <p>Projeto com proprietário, participantes e descrição do escopo.</p>
+          <p>Projeto com proprietário e descrição do escopo.</p>
         </div>
       </header>
 
@@ -54,29 +48,14 @@ export function ProjectForm({ users, initialProject, onSaveProject, onNavigate }
           Descrição
           <textarea name="description" placeholder="Descreva o escopo do projeto" defaultValue={initialProject?.description} required />
         </label>
-        <label>
-          Proprietário
-          <select name="ownerId" value={ownerId} onChange={(event) => handleOwnerChange(event.target.value)}>
-            {users.map((user) => <option value={user.id} key={user.id}>{user.name}</option>)}
-          </select>
-        </label>
 
-        <fieldset className="participants-box">
-          <legend>Participantes do projeto</legend>
-          <p>Selecione os usuários que poderão acompanhar modificações e achados do projeto.</p>
-          <div className="participants-grid">
-            {users.map((user) => (
-              <label className="check-row" key={user.id}>
-                <input type="checkbox" checked={participantIds.includes(user.id)} onChange={() => toggleParticipant(user.id)} disabled={user.id === ownerId} />
-                <span>{user.name}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
+        {error && <small style={{ color: 'var(--red)' }}>{error}</small>}
 
         <div className="form-actions">
           <button className="ghost-button" type="button" onClick={() => onNavigate(initialProject ? 'project-details' : 'projects')}>Cancelar</button>
-          <button className="primary-button" type="submit">{initialProject ? 'Salvar alterações' : 'Salvar projeto'}</button>
+          <button className="primary-button" type="submit" disabled={saving}>
+            {saving ? 'Salvando...' : (initialProject ? 'Salvar alterações' : 'Salvar projeto')}
+          </button>
         </div>
       </form>
     </section>
