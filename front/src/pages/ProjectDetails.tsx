@@ -42,7 +42,7 @@ export function ProjectDetails({ project, findings, users, onNavigate, onOpenFin
     return (
       <section className="empty-state">
         <h1>Projeto não selecionado</h1>
-        <button className="primary-button" onClick={() => onNavigate('projects')}>Voltar para projetos</button>
+        <button className="primary-button" onClick={() => () => window.history.back()}>Voltar para projetos</button>
       </section>
     );
   }
@@ -84,7 +84,7 @@ export function ProjectDetails({ project, findings, users, onNavigate, onOpenFin
           <p>{project.description}</p>
         </div>
         <div className="header-actions">
-          <button className="ghost-button" onClick={() => onNavigate('projects')}>Voltar</button>
+          <button className="ghost-button" onClick={() => () => window.history.back()}>Voltar</button>
           <button className="ghost-button" onClick={() => onNavigate('edit-project')}>Editar projeto</button>
           <button className="primary-button" onClick={() => onNavigate('new-finding')}>Novo achado</button>
         </div>
@@ -114,9 +114,44 @@ export function ProjectDetails({ project, findings, users, onNavigate, onOpenFin
             <h2>Participantes do projeto</h2>
             <p className="muted-text">Usuários com acesso a este projeto.</p>
           </div>
+          <button className="primary-button" onClick={() => { setShowDropdown(!showDropdown); setSearchText(''); }}>
+            {showDropdown ? 'Fechar' : '+ Adicionar usuário'}
+          </button>
         </div>
 
-        <div className="participants-grid" style={{ marginBottom: 16 }}>
+        {/* Busca para adicionar participante */}
+        {showDropdown && (
+          <div className="add-participant-box" style={{ marginBottom: 16 }}>
+            <div className="ac-wrapper">
+              <input
+                placeholder="Buscar usuário por nome ou e-mail..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                disabled={loadingAccess}
+                autoFocus
+              />
+              {searchText.length >= 1 && (
+                <div className="ac-dropdown">
+                  {searchResults.length === 0 ? (
+                    <div className="ac-empty">Nenhum usuário encontrado para "{searchText}".</div>
+                  ) : (
+                    searchResults.map((u) => (
+                      <button key={u.id} className="ac-option" onClick={() => handleAdd(u.id)} disabled={loadingAccess}>
+                        <div>
+                          <strong>{u.name}</strong>
+                          <span>{u.email}</span>
+                        </div>
+                        <span className="ac-add-label">+ Adicionar</span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="participants-grid">
           {participants.map((u) => (
             <div className="check-row" key={u.id}>
               <span style={{ flex: 1 }}>
@@ -130,37 +165,6 @@ export function ProjectDetails({ project, findings, users, onNavigate, onOpenFin
               )}
             </div>
           ))}
-        </div>
-
-        {/* Adicionar participante — dropdown com busca */}
-        <div className="add-participant-box">
-          <label>Adicionar participante</label>
-          <div className="ac-wrapper">
-            <input
-              placeholder="Digite para buscar por nome ou e-mail..."
-              value={searchText}
-              onChange={(e) => { setSearchText(e.target.value); setShowDropdown(true); }}
-              onFocus={() => setShowDropdown(true)}
-              disabled={loadingAccess}
-            />
-            {showDropdown && searchText.length >= 1 && (
-              <div className="ac-dropdown">
-                {searchResults.length === 0 ? (
-                  <div className="ac-empty">Nenhum usuário encontrado para "{searchText}".</div>
-                ) : (
-                  searchResults.map((u) => (
-                    <button key={u.id} className="ac-option" onClick={() => handleAdd(u.id)} disabled={loadingAccess}>
-                      <div>
-                        <strong>{u.name}</strong>
-                        <span>{u.email}</span>
-                      </div>
-                      <span className="ac-add-label">+ Adicionar</span>
-                    </button>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
         </div>
       </article>
 

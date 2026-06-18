@@ -70,7 +70,7 @@ export function FindingDetails({ finding, projects, statuses, onUpdateStatus, on
           <p>{project?.title}</p>
         </div>
         <div className="header-actions">
-          <button className="ghost-button" onClick={() => onNavigate('findings')}>Voltar</button>
+          <button className="ghost-button" onClick={() => window.history.back()}>Voltar</button>
           <button className="primary-button" onClick={() => onNavigate('edit-finding')}>Editar achado</button>
         </div>
       </header>

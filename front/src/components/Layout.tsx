@@ -1,4 +1,4 @@
-import { Bell, FileWarning, FolderKanban, LayoutDashboard, LogOut, Plus, ShieldCheck, Users } from 'lucide-react';
+import { Bell, FileWarning, FolderKanban, LayoutDashboard, LogOut, Plus, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { View } from '../types';
 
@@ -15,7 +15,6 @@ export function Layout({ children, view, unreadNotifications, onNavigate, onLogo
     { id: 'dashboard' as View, label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
     { id: 'projects' as View, label: 'Projetos', icon: <FolderKanban size={18} /> },
     { id: 'findings' as View, label: 'Achados', icon: <FileWarning size={18} /> },
-    { id: 'users' as View, label: 'Usuários', icon: <Users size={18} /> },
     { id: 'notifications' as View, label: 'Notificações', icon: <Bell size={18} /> },
   ];
 

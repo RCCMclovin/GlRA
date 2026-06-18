@@ -52,7 +52,7 @@ export function ProjectForm({ initialProject, onSaveProject, onNavigate }: Proje
         {error && <small style={{ color: 'var(--red)' }}>{error}</small>}
 
         <div className="form-actions">
-          <button className="ghost-button" type="button" onClick={() => onNavigate(initialProject ? 'project-details' : 'projects')}>Cancelar</button>
+          <button className="ghost-button" type="button" onClick={() => window.history.back()}>Cancelar</button>
           <button className="primary-button" type="submit" disabled={saving}>
             {saving ? 'Salvando...' : (initialProject ? 'Salvar alterações' : 'Salvar projeto')}
           </button>
