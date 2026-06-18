@@ -445,13 +445,8 @@
             "name": "notificationId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "NotificationId",
-            "description": "ID da notificação",
-            "in": "query",
-            "type": "string"
+            "type": "string",
+            "description": "ID da notificação"
           }
         ],
         "responses": {

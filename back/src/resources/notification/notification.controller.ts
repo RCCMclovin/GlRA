@@ -70,7 +70,7 @@ const remove = async (req: Request, res: Response) => {
   /*
  #swagger.tags = ["Notifications"]
  #swagger.summary = 'Remove uma notificação na base.'
- #swagger.parameters['NotificationId'] = { description: 'ID da notificação' }
+ #swagger.parameters['notificationId'] = { description: 'ID da notificação' }
  #swagger.responses[200] = {
  description: 'Notificação Removida'
  }
