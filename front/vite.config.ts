@@ -8,11 +8,11 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/v1': {
-        target: 'http://localhost:3333',
+        target: 'https://glraback.rcchome.com.br',
         changeOrigin: true,
       },
       '/api': {
-        target: 'http://localhost:3333',
+        target: 'https://glraback.rcchome.com.br',
         changeOrigin: true,
       },
     },
