@@ -36,7 +36,6 @@ Esta etapa entrega apenas o frontend. A integração com backend, Prisma, MySQL 
 - A tela de abertura do projeto foi mantida, com lista de achados vinculados.
 - Paleta ajustada para tons pastéis mais coerentes com o protótipo visual.
 
-
 ## Telas consideradas no front completo
 
 - Login
@@ -52,13 +51,11 @@ Esta etapa entrega apenas o frontend. A integração com backend, Prisma, MySQL 
 - Usuários
 - Notificações
 
-
 ## Ajustes da versão v11
 
 - Mantidos os blocos superiores definidos pelo usuário.
 - Reintroduzidos Status da remediação e Distribuição por severidade, filtrados pelo usuário logado.
 - Incluída seção Achados recentes com achados dos projetos em que o usuário participa.
-
 
 ## Ajustes da versão v12
 
