@@ -14,7 +14,7 @@ validateEnv();
 
 const limiter = rateLimit({
  windowMs: 15 * 60 * 1000,
- max: 100,
+ max: 300,
  message: {
    error: 'Excesso de requisições, tente novamente mais tarde.',
    retryAfter: '15 minutes',
