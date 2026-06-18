@@ -110,13 +110,8 @@
             "name": "projectId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "projecId",
-            "description": "ID do projeto",
-            "in": "query",
-            "type": "string"
+            "type": "string",
+            "description": "ID do projeto"
           }
         ],
         "responses": {
@@ -137,6 +132,57 @@
           },
           "406": {
             "description": "Não existe um projeto com o id informado."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/finding/search/{projectId}": {
+      "post": {
+        "tags": [
+          "Achados"
+        ],
+        "summary": "Busca por achados de um projeto.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do projeto"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SearchFinding"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FindingPublic"
+              },
+              "xml": {
+                "name": "main"
+              }
+            },
+            "description": "OK"
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "406": {
+            "description": "Não existe um projeto com o id informado."
+          },
+          "422": {
+            "description": "Body inválido."
           },
           "500": {
             "description": "Internal Server Error"
@@ -703,6 +749,44 @@
           },
           "500": {
             "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/v1/project/search": {
+      "post": {
+        "tags": [
+          "Projetos"
+        ],
+        "summary": "Busca por projetos do usuário logado.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SearchProject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Project"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -1278,6 +1362,27 @@
         }
       }
     },
+    "SearchFinding": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Optional Text"
+        },
+        "statusId": {
+          "type": "string",
+          "example": "Optional UUID"
+        },
+        "severityId": {
+          "type": "string",
+          "example": "Optional UUID"
+        },
+        "categoryId": {
+          "type": "string",
+          "example": "Optional UUID"
+        }
+      }
+    },
     "MediaDTO": {
       "type": "string",
       "example": "Binary"
@@ -1367,6 +1472,15 @@
           "example": "Text"
         },
         "description": {
+          "type": "string",
+          "example": "Text"
+        }
+      }
+    },
+    "SearchProject": {
+      "type": "object",
+      "properties": {
+        "title": {
           "type": "string",
           "example": "Text"
         }

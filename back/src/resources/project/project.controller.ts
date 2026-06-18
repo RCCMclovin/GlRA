@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import projectService from './project.service';
-import { ProjectDTO } from './project.types';
+import { ProjectDTO, SearchProject } from './project.types';
 import { Project } from '../../generated/prisma/client';
 import projectAccessService from '../projectAccess/projectAccess.service';
 
@@ -154,6 +154,33 @@ const read = async (req: Request, res: Response) => {
   }
 };
 
+const search = async (req: Request, res: Response) => {
+  /*
+ #swagger.tags = ["Projetos"]
+ #swagger.summary = 'Busca por projetos do usuário logado.'
+ #swagger.parameters['body'] = {
+ in: 'body',
+ schema: { $ref: '#/definitions/SearchProject' }
+ } 
+ #swagger.responses[200] = {
+ schema: [{ $ref: '#/definitions/Project' }]
+ }
+ #swagger.responses[403] = {
+ description: 'User unautorized.'
+ }
+ #swagger.responses[500] = {
+ description: "Internal Server Error"
+ }
+*/
+const searchTerms = req.body as SearchProject;
+  try {
+    const projects = await projectService.search(searchTerms.title,req.session.uid as string);
+    return res.json(projects);
+  } catch (e) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(e);
+  }
+};
+
 
 export default {
     index,
@@ -161,4 +188,5 @@ export default {
     update,
     remove,
     read,
+    search,
 }

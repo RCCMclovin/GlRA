@@ -65,6 +65,12 @@ const doc = {
         severityId: "3491ec2f-f2dc-4b7b-8cea-47155d2d6087",
         categoryId: "2a97ec94-d91c-49bc-95c5-42decebc0a88"
     },
+    SearchFinding:{
+        title: "Optional Text",
+        statusId: "Optional UUID",
+        severityId: "Optional UUID",
+        categoryId: "Optional UUID"
+    },
     MediaDTO: "Binary",
     Media:{
       id: "a8c2c506-9039-40e2-8071-15501d60e4c7",
@@ -92,6 +98,9 @@ const doc = {
     ProjectDTO:{
         title: "Text",
         description: "Text",
+    },
+    SearchProject:{
+        title: "Text",
     },
     Project:{
       id: '98ec6545-23d1-4d9e-a565-0c7452b45a8b',

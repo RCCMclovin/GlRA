@@ -6,7 +6,7 @@ import findingStatusService from '../findingStatus/fidingStatus.service';
 import findingSeverityService from '../findingSeverity/fidingSeverity.service';
 import { Project } from '../../generated/prisma/client';
 import projectService from '../project/project.service';
-import { CreateFindingDTO, FindingPublic, UpdateFindingDTO } from './finding.types';
+import { CreateFindingDTO, FindingPublic, SearchFinding, UpdateFindingDTO } from './finding.types';
 import userService from '../user/user.service';
 import { Finding } from '../../generated/prisma/browser';
 import projectAccessService from '../projectAccess/projectAccess.service';
@@ -16,7 +16,7 @@ const index = async (req: Request, res: Response) => {
   /*
  #swagger.tags = ["Achados"]
  #swagger.summary = 'Recupera dados de todos os achados de um projeto.'
- #swagger.parameters['projecId'] = { description: 'ID do projeto' }
+ #swagger.parameters['projectId'] = { description: 'ID do projeto' }
  #swagger.responses[200] = {
  schema: [{ $ref: '#/definitions/FindingPublic' }]
  }
@@ -231,10 +231,67 @@ const remove = async (req: Request, res: Response) => {
   }
 };
 
+const search = async (req: Request, res: Response) => {
+  /*
+ #swagger.tags = ["Achados"]
+ #swagger.summary = 'Busca por achados de um projeto.'
+ #swagger.parameters['projectId'] = { description: 'ID do projeto' }
+ #swagger.parameters['body'] = {
+ in: 'body',
+ schema: { $ref: '#/definitions/SearchFinding' }
+ }
+ #swagger.responses[200] = {
+ schema: [{ $ref: '#/definitions/FindingPublic' }]
+ }
+ #swagger.responses[403] = {
+ description: 'User unautorized.'
+ }
+ #swagger.responses[406] = {
+ description:  'Não existe um projeto com o id informado.'
+ }
+ #swagger.responses[422] = {
+ description:  'Body inválido.'
+ }
+ #swagger.responses[500] = {
+ description: "Internal Server Error"
+ }
+*/
+try {
+     const project = await projectService.findProjectsById(req.params.projectId as string) as Project;
+     const searchTerms = req.body as SearchFinding;
+     if(project){
+          const findings: FindingPublic[] = [];
+          await Promise.all((await findingService.search(searchTerms, project.id))
+          .map(async (f) => {
+            const public_fiding: FindingPublic = {
+                id:f.id,
+                title:f.title,
+                description: f.description,
+                solution: f.solution,
+                projectId: f.projectId,
+                category: await findingTypeService.translateId(f.categoryId) ,
+                severity: await findingSeverityService.translateId(f.severityId),
+                status: await findingStatusService.translateId(f.statusId),
+                reporter: await userService.toCard(f.reporterId),
+                assigned: await userService.toCard(f.assignedId),
+            }
+            findings.push(public_fiding);
+          })).finally(() => res.status(StatusCodes.OK).json(findings));
+          
+      }else{
+          return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);
+      }
+    } catch (e) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+    }
+};
+
+
 export default {
     index,
     read,
     create,
     update,
     remove,
+    search,
 }

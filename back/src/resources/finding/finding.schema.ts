@@ -20,3 +20,10 @@ export const updateFindingSchema = Joi.object().keys({
   statusId: Joi.string().uuid().required(),
   assignedId: Joi.string().uuid().required(),
 });
+
+export const searchFindingSchema = Joi.object().keys({
+  title: Joi.string().min(3).max(100),
+  categoryId: Joi.string().uuid(),
+  severityId: Joi.string().uuid(),
+  statusId: Joi.string().uuid()
+});

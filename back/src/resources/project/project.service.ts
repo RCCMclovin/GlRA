@@ -32,6 +32,13 @@ async function remove(id: string): Promise<void>{
   await prisma.project.delete({where:{id}});
 }
 
+async function search(text: string, userId: string): Promise<Project[]>{
+  return await prisma.project.findMany({
+    where:{title:{contains:text}, creatorId:userId}, 
+    orderBy:{createdAt:'desc'}
+  })
+}
+
 export default {
     getAllProjects,
     findProjectsById,
@@ -40,4 +47,5 @@ export default {
     create,
     update,
     remove,
+    search,
 }

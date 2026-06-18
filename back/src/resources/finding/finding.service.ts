@@ -1,5 +1,6 @@
 import { PrismaClient, Finding } from '../../generated/prisma/client';
-import { CreateFindingDTO, UpdateFindingDTO } from './finding.types';
+import { FindingWhereInput } from '../../generated/prisma/models';
+import { CreateFindingDTO, SearchFinding, UpdateFindingDTO } from './finding.types';
 
 const prisma = new PrismaClient();
 
@@ -23,10 +24,30 @@ async function read(id: string): Promise<Finding | null>{
     return await prisma.finding.findUnique({where:{id}});
 }
 
+async function search(data: SearchFinding, projectId: string) {
+    const where: FindingWhereInput= {projectId};
+    if(data.title){
+        where.title = {contains: data.title};
+    }
+    if(data.categoryId){
+        where.categoryId = data.categoryId;
+    }
+    if(data.severityId){
+        where.severityId = data.severityId;
+    }
+    if(data.statusId){
+        where.statusId = data.statusId;
+    }
+    return await prisma.finding.findMany({
+        where:where,
+    })
+}
+
 export default {
     index,
     create,
     update,
     remove,
     read,
+    search
 }
