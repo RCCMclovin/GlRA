@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import userService from './user.service';
-import { CreateUserDTO, UpdateUserDTO} from './user.types';
+import { CreateUserDTO, SearchUser, UpdateUserDTO} from './user.types';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 
 const index = async (req: Request, res: Response) => {
@@ -162,6 +162,36 @@ const checkEmail = async (req: Request, res: Response) => {
   }
 };
 
+const search = async (req: Request, res: Response) => {
+  /*
+ #swagger.tags = ["Usuários"]
+ #swagger.summary = 'Busca por usuários.'
+ #swagger.parameters['body'] = {
+ in: 'body',
+ schema: { $ref: '#/definitions/SearchUser' }
+ } 
+ #swagger.responses[200] = {
+ schema: [{ $ref: '#/definitions/UserDTO' }]
+ }
+ #swagger.responses[403] = {
+ description: 'User unautorized.'
+ }
+ #swagger.responses[422] = {
+ description:  'Body inválido.'
+ }
+ #swagger.responses[500] = {
+ description: "Internal Server Error"
+ }
+*/
+const body = req.body as SearchUser;
+  try {
+    const users = await userService.search(body);
+    return res.json(users);
+  } catch (e) {
+    return res.status(500).json(e);
+  }
+};
+
 export default {
   index,
   create,
@@ -169,4 +199,5 @@ export default {
   remove,
   read,
   checkEmail,
+  search,
 };

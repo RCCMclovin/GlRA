@@ -1045,6 +1045,47 @@
         }
       }
     },
+    "/v1/user/search": {
+      "post": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Busca por usuários.",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SearchUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserDTO"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "422": {
+            "description": "Body inválido."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/user/checkemail/{email}": {
       "get": {
         "tags": [
@@ -1575,6 +1616,19 @@
         "updatedAt": {
           "type": "string",
           "example": "DateTime"
+        }
+      }
+    },
+    "SearchUser": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "Optional"
+        },
+        "name": {
+          "type": "string",
+          "example": "Optional"
         }
       }
     }

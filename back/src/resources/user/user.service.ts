@@ -1,5 +1,6 @@
 import { PrismaClient, User } from '../../generated/prisma/client';
-import { CreateUserDTO, UserDTO, UpdateUserDTO, CardUser } from './user.types';
+import { UserWhereInput } from '../../generated/prisma/models';
+import { CreateUserDTO, UserDTO, UpdateUserDTO, CardUser, SearchUser } from './user.types';
 import { genSalt, hash } from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -73,6 +74,21 @@ async function toCard(id: string): Promise<CardUser>{
   return (await prisma.user.findUnique({where:{id}, select:{id:true, name:true}})) as CardUser;
 }
 
+async function search(data: SearchUser): Promise<User[]>{
+  const where: UserWhereInput = {};
+  if("name" in data){
+    where.name = {contains:data.name};
+  }else{
+    if("email" in data){
+      where.email = {contains:data.email};
+    }
+  }
+  if(!("name" in data) && !("email" in data)){
+    return []
+  }
+  return await prisma.user.findMany({where:where});
+}
+
 export default {
   getAllUsers,
   findUserByEmail,
@@ -83,4 +99,5 @@ export default {
   checkEmail,
   readUserWithRole,
   toCard,
+  search,
 };

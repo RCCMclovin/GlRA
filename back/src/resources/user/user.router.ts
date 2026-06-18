@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import userController from './user.controller';
-import { userSchema } from './user.schema';
+import { SearchUserSchema, userSchema } from './user.schema';
 import { validate } from '../../middlewares/validate';
 import isAuth from '../../middlewares/isAuth';
 import isSelf from '../../middlewares/isSelf';
@@ -9,6 +9,7 @@ const router = Router();
 
 //router.get('/', userController.index);
 //router.post('/', validate(userSchema), userController.create);
+router.post('/search', isAuth, validate(SearchUserSchema), userController.search);
 router.get('/checkemail/:email', userController.checkEmail);
 router.get('/:userId', isAuth, userController.read);
 router.put(

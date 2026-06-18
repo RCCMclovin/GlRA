@@ -127,6 +127,10 @@ const doc = {
       name: "Fulano de Tal",
       createdAt: "DateTime",
       updatedAt: "DateTime",
+    },
+    SearchUser: {
+      email: "Optional",
+      name: "Optional"
     }
 
   },
