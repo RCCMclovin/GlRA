@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { FindingDetails } from './pages/FindingDetails';
@@ -9,12 +9,11 @@ import { Notifications } from './pages/Notifications';
 import { ProjectDetails } from './pages/ProjectDetails';
 import { ProjectForm } from './pages/ProjectForm';
 import { Projects } from './pages/Projects';
-import { UsersPage } from './pages/UsersPage';
 import * as api from './api';
 import type { Finding, Lookup, Notification, Project, User, View } from './types';
 
 function App() {
-  const [view, setView] = useState<View>('login');
+  const [view, setViewRaw] = useState<View>('login');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const [users, setUsers] = useState<User[]>([]);
@@ -27,36 +26,62 @@ function App() {
 
   const [selectedFindingId, setSelectedFindingId] = useState<string | undefined>();
   const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  function navigate(v: View) {
+    setViewRaw(v);
+    window.history.pushState({ view: v }, '', `#${v}`);
+  }
+
+  useEffect(() => {
+    function onPopState(e: PopStateEvent) {
+      const v = e.state?.view as View | undefined;
+      if (v) setViewRaw(v);
+    }
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  useEffect(() => {
+    api.getMe()
+      .then(async (user) => {
+        setCurrentUser(user);
+        setViewRaw('dashboard');
+        window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
+        await loadAllData();
+      })
+      .catch(() => {
+        setLoading(false);
+      })
+      .finally(() => setCheckingSession(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const unreadNotifications = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
   const loadAllData = useCallback(async () => {
     setLoading(true);
     try {
-      const [projectsData, notificationsData, severitiesData, statusesData, categoriesData] = await Promise.all([
+      const [projectsData, notificationsData, severitiesData, statusesData, categoriesData, usersData] = await Promise.all([
         api.getMyProjects(),
         api.getNotifications(),
         api.getSeverities(),
         api.getStatuses(),
         api.getCategories(),
+        api.getUsers().catch(() => [] as User[]),
       ]);
       setProjects(projectsData);
       setNotifications(notificationsData);
       setSeverities(severitiesData);
       setStatuses(statusesData);
       setCategories(categoriesData);
+      setUsers(usersData);
 
       const allFindings = (await Promise.all(
         projectsData.map((p) => api.getProjectFindings(p.id).catch(() => []))
       )).flat();
       setFindings(allFindings);
-
-      try {
-        setUsers(await api.getUsers());
-      } catch {
-        /* user list route may be restricted */
-      }
     } finally {
       setLoading(false);
     }
@@ -65,7 +90,7 @@ function App() {
   async function handleLogin(user: User) {
     setCurrentUser(user);
     await loadAllData();
-    setView('dashboard');
+    navigate('dashboard');
   }
 
   async function handleLogout() {
@@ -75,17 +100,17 @@ function App() {
     setFindings([]);
     setNotifications([]);
     setUsers([]);
-    setView('login');
+    navigate('login');
   }
 
   function handleOpenDetails(id: string) {
     setSelectedFindingId(id);
-    setView('finding-details');
+    navigate('finding-details');
   }
 
   function handleOpenProject(projectId: string) {
     setSelectedProjectId(projectId);
-    setView('project-details');
+    navigate('project-details');
   }
 
   async function handleSaveProject(data: { title: string; description: string }, projectId?: string) {
@@ -95,7 +120,7 @@ function App() {
       await api.createProject(data);
     }
     await loadAllData();
-    setView('projects');
+    navigate('projects');
   }
 
   async function handleSaveFinding(payload: api.CreateFindingPayload | api.UpdateFindingPayload, findingId?: string) {
@@ -105,7 +130,7 @@ function App() {
       await api.createFinding(payload as api.CreateFindingPayload);
     }
     await loadAllData();
-    setView('findings');
+    navigate('findings');
   }
 
   async function handleUpdateStatus(findingId: string, statusId: string) {
@@ -125,14 +150,24 @@ function App() {
     await loadAllData();
   }
 
-  async function handleCreateUser(data: { name: string; email: string; password: string }) {
-    await api.createUser(data);
-    try { setUsers(await api.getUsers()); } catch { /* ignore */ }
-  }
-
   async function handleToggleNotification(id: number) {
     await api.toggleNotificationRead(id);
     setNotifications(await api.getNotifications());
+  }
+
+  async function handleDeleteNotification(id: number) {
+    await api.deleteNotification(id);
+    setNotifications(await api.getNotifications());
+  }
+
+  function goBack() {
+    window.history.back();
+  }
+
+  if (checkingSession || (loading && view === 'login')) {
+    return (
+      <section className="empty-state"><h1>Carregando...</h1></section>
+    );
   }
 
   if (view === 'login') {
@@ -141,7 +176,7 @@ function App() {
 
   if (loading) {
     return (
-      <Layout view={view} unreadNotifications={0} onNavigate={setView} onLogout={handleLogout}>
+      <Layout view={view} unreadNotifications={0} onNavigate={navigate} onLogout={handleLogout}>
         <section className="empty-state"><h1>Carregando...</h1></section>
       </Layout>
     );
@@ -151,38 +186,38 @@ function App() {
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
   return (
-    <Layout view={view} unreadNotifications={unreadNotifications} onNavigate={setView} onLogout={handleLogout}>
+    <Layout view={view} unreadNotifications={unreadNotifications} onNavigate={navigate} onLogout={handleLogout}>
       {view === 'dashboard' && (
         <Dashboard
           currentUserId={currentUser?.id ?? ''}
           findings={findings}
           projects={projects}
           users={users}
-          onNavigate={setView}
+          onNavigate={navigate}
           onOpenProject={handleOpenProject}
           onOpenFinding={handleOpenDetails}
         />
       )}
       {view === 'projects' && (
-        <Projects projects={projects} users={users} onNavigate={setView} onOpenProject={handleOpenProject} />
+        <Projects projects={projects} users={users} onNavigate={navigate} onOpenProject={handleOpenProject} />
       )}
       {view === 'project-details' && (
         <ProjectDetails
           project={selectedProject}
           findings={findings}
           users={users}
-          onNavigate={setView}
+          onNavigate={navigate}
           onOpenFinding={handleOpenDetails}
         />
       )}
       {view === 'new-project' && (
-        <ProjectForm users={users} onSaveProject={handleSaveProject} onNavigate={setView} />
+        <ProjectForm users={users} onSaveProject={handleSaveProject} onNavigate={navigate} />
       )}
       {view === 'edit-project' && (
-        <ProjectForm users={users} initialProject={selectedProject} onSaveProject={handleSaveProject} onNavigate={setView} />
+        <ProjectForm users={users} initialProject={selectedProject} onSaveProject={handleSaveProject} onNavigate={navigate} />
       )}
       {view === 'findings' && (
-        <Findings findings={findings} projects={projects} users={users} severities={severities} statuses={statuses} onNavigate={setView} onOpenDetails={handleOpenDetails} />
+        <Findings findings={findings} projects={projects} users={users} severities={severities} statuses={statuses} onNavigate={navigate} onOpenDetails={handleOpenDetails} />
       )}
       {view === 'new-finding' && (
         <FindingForm
@@ -193,7 +228,7 @@ function App() {
           categories={categories}
           preselectedProjectId={selectedProjectId}
           onSaveFinding={handleSaveFinding}
-          onNavigate={setView}
+          onNavigate={navigate}
         />
       )}
       {view === 'edit-finding' && (
@@ -205,7 +240,7 @@ function App() {
           categories={categories}
           initialFinding={selectedFinding}
           onSaveFinding={handleSaveFinding}
-          onNavigate={setView}
+          onNavigate={navigate}
         />
       )}
       {view === 'finding-details' && (
@@ -215,12 +250,11 @@ function App() {
           users={users}
           statuses={statuses}
           onUpdateStatus={handleUpdateStatus}
-          onNavigate={setView}
+          onNavigate={navigate}
         />
       )}
-      {view === 'users' && <UsersPage users={users} onCreateUser={handleCreateUser} />}
       {view === 'notifications' && (
-        <Notifications notifications={notifications} projects={projects} onToggleRead={handleToggleNotification} />
+        <Notifications notifications={notifications} projects={projects} onToggleRead={handleToggleNotification} onDelete={handleDeleteNotification} />
       )}
     </Layout>
   );

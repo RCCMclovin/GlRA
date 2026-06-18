@@ -141,7 +141,7 @@ export function FindingForm({ projects, severities, statuses, categories, initia
         {error && <small className="full-row" style={{ color: 'var(--red)' }}>{error}</small>}
 
         <div className="form-actions full-row">
-          <button className="ghost-button" type="button" onClick={() => onNavigate(isEditing ? 'finding-details' : 'findings')}>Cancelar</button>
+          <button className="ghost-button" type="button" onClick={() => window.history.back()}>Cancelar</button>
           <button className="primary-button" type="submit" disabled={saving || projectParticipants.length === 0}>
             {saving ? 'Salvando...' : (isEditing ? 'Salvar alterações' : 'Salvar achado')}
           </button>

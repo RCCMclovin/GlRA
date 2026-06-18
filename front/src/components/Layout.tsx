@@ -15,7 +15,7 @@ export function Layout({ children, view, unreadNotifications, onNavigate, onLogo
     { id: 'dashboard' as View, label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
     { id: 'projects' as View, label: 'Projetos', icon: <FolderKanban size={18} /> },
     { id: 'findings' as View, label: 'Achados', icon: <FileWarning size={18} /> },
-    { id: 'notifications' as View, label: 'Notificações', icon: <Bell size={18} /> }
+    { id: 'notifications' as View, label: 'Notificações', icon: <Bell size={18} /> },
   ];
 
   return (

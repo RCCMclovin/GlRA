@@ -1,12 +1,14 @@
+import { Trash2 } from 'lucide-react';
 import type { Notification, Project } from '../types';
 
 type NotificationsProps = {
   notifications: Notification[];
   projects: Project[];
   onToggleRead: (id: number) => void;
+  onDelete: (id: number) => void;
 };
 
-export function Notifications({ notifications, onToggleRead }: NotificationsProps) {
+export function Notifications({ notifications, onToggleRead, onDelete }: NotificationsProps) {
   return (
     <section>
       <header className="page-header compact">
@@ -25,11 +27,20 @@ export function Notifications({ notifications, onToggleRead }: NotificationsProp
             <article
               className={notification.read ? 'notification-card' : 'notification-card unread'}
               key={notification.id}
-              onClick={() => onToggleRead(notification.id)}
-              style={{ cursor: 'pointer' }}
             >
-              <p>{notification.content}</p>
-              <small>{notification.read ? 'Lida' : 'Clique para marcar como lida'}</small>
+              <div className="notification-row">
+                <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => onToggleRead(notification.id)}>
+                  <p style={{ margin: 0 }}>{notification.content}</p>
+                  <small>{notification.read ? 'Lida' : 'Clique para marcar como lida'}</small>
+                </div>
+                <button
+                  className="notification-delete"
+                  title="Apagar notificação"
+                  onClick={() => onDelete(notification.id)}
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </article>
           ))}
         </div>
