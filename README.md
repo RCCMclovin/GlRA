@@ -402,7 +402,7 @@ Novos usuários podem ser cadastrados via:
 
 ## 15. Limitações atuais
 
-- O upload e a visualização de evidências ainda precisam ser refinados no frontend;
+- O upload e a visualização de evidências ainda precisam ser refinados no frontend (Limitadas a imagens);
 - Não há geração de relatórios;
 - Não há exportação dos achados em PDF, CSV ou outro formato;
 
@@ -414,7 +414,6 @@ Novos usuários podem ser cadastrados via:
 - Permitir exportação em PDF, CSV ou Markdown;
 - Melhorar o painel de notificações;
 - Criar histórico de alterações dos achados;
-- Associar achados a referências como CWE, OWASP Top 10 e CVE;
 - Criar um agente assistivo para sugerir correções e investigações.
 
  ---
