@@ -22,7 +22,10 @@ export function FindingDetails({ finding, projects, statuses, onUpdateStatus, on
 
   const loadAttachments = useCallback(async () => {
     if (!finding) return;
-    try { setAttachments(await api.getMediaForFinding(finding.id)); } catch { /* */ }
+    try {
+      const data = await api.getMediaForFinding(finding.id);
+      setAttachments(Array.isArray(data) ? data : data ? [data] : []);
+    } catch { setAttachments([]); }
   }, [finding]);
 
   useEffect(() => { loadAttachments(); }, [loadAttachments]);
@@ -135,7 +138,12 @@ export function FindingDetails({ finding, projects, statuses, onUpdateStatus, on
               return (
                 <div className="attachment-card" key={media.id}>
                   <div className="attachment-img" onClick={() => setPreviewUrl(imgUrl)} style={{ cursor: 'pointer' }}>
-                    <img src={imgUrl} alt={media.name} loading="lazy" />
+                    <img
+                      src={imgUrl}
+                      alt={media.name}
+                      loading="lazy"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
                   </div>
                   <div className="attachment-info">
                     <small title={media.name}>{media.name.length > 20 ? media.name.slice(0, 17) + '...' : media.name}</small>

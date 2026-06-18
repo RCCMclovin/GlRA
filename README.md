@@ -97,30 +97,34 @@ O **GlRA** é uma aplicação web full-stack composta por:
 
 ### 6.1 Frontend (conectado ao backend)
 
-- Tela de login com autenticação real via API;
-- Dashboard do usuário logado com dados do backend;
-- Listagem e cadastro de projetos;
-- Detalhes de projeto com achados associados;
-- Listagem, cadastro e edição de achados;
+- Tela de login e cadastro de conta com autenticação real via API;
+- Persistência de sessão (recarregar a página mantém o login);
+- Dashboard do usuário com gráficos de distribuição por severidade, pipeline de status e risco por projeto;
+- Listagem, cadastro e edição de projetos;
+- Detalhes de projeto com gestão de participantes (busca e autocomplete de usuários);
+- Gráficos donut (severidade) e ring (% resolvido) por projeto;
+- Listagem, cadastro e edição de achados com filtros (título, severidade, status, usuário);
 - Detalhes do achado com atualização de status;
+- Seção de anexos/evidências com upload de imagens, visualização em miniatura e preview em tela cheia;
 - Exibição de severidade, status, categoria CWE, responsável;
-- Cadastro de usuários;
-- Notificações com marcação de leitura;
+- Cadastro de usuários com validação;
+- Notificações com marcação de leitura e exclusão;
 - Todas as operações CRUD conectadas à API REST.
 
 ### 6.2 Backend
 
-- Autenticação com sessão (signup, login, logout);
-- CRUD completo de projetos;
-- CRUD completo de achados com notificações automáticas;
+- Autenticação com sessão (signup, login, logout, verificação de sessão via `/auth/me`);
+- CRUD completo de projetos com busca por título;
+- CRUD completo de achados com notificações automáticas e validação Joi;
+- Busca avançada de achados (por título, severidade, status, categoria, responsável, reportante);
 - Controle de acesso a projetos (participantes);
-- CRUD de usuários;
-- Listagem de severidades, status e categorias;
-- Upload de mídias/evidências;
+- CRUD de usuários com busca por nome/e-mail;
+- Listagem de severidades, status e categorias (em português);
+- Upload, listagem e exclusão de mídias/evidências vinculadas a achados;
 - Notificações automáticas;
 - Rate limiting e segurança com Helmet;
 - Validação de dados com Joi;
-- Documentação Swagger automática.
+- Documentação Swagger automática (regenerada no build).
 
 ### 6.3 Persistência
 
@@ -315,9 +319,10 @@ Todos os endpoints estão sob o prefixo `/v1/`.
 
 | Método | Endpoint | Descrição |
 | --- | --- | --- |
-| POST | `/v1/auth/signup` | Cadastro de usuário |
+| POST | `/v1/auth/signup` | Cadastro de usuário (com auto-login) |
 | POST | `/v1/auth/login` | Login (retorna dados do usuário) |
 | POST | `/v1/auth/logout` | Logout |
+| GET | `/v1/auth/me` | Dados do usuário logado (persistência de sessão) |
 
 ### Projetos
 
@@ -325,6 +330,7 @@ Todos os endpoints estão sob o prefixo `/v1/`.
 | --- | --- | --- |
 | GET | `/v1/project` | Listar projetos do criador |
 | POST | `/v1/project` | Criar projeto |
+| POST | `/v1/project/search` | Buscar projetos por título |
 | GET | `/v1/project/:id` | Detalhes do projeto |
 | PUT | `/v1/project/:id` | Atualizar projeto |
 | DELETE | `/v1/project/:id` | Remover projeto |
@@ -343,6 +349,7 @@ Todos os endpoints estão sob o prefixo `/v1/`.
 | Método | Endpoint | Descrição |
 | --- | --- | --- |
 | GET | `/v1/finding/p/:projectId` | Achados do projeto |
+| POST | `/v1/finding/search/:projectId` | Buscar achados (título, severidade, status, responsável, reportante, categoria) |
 | GET | `/v1/finding/:id` | Detalhes do achado |
 | POST | `/v1/finding` | Criar achado |
 | PUT | `/v1/finding/:id` | Atualizar achado |
@@ -362,9 +369,11 @@ Todos os endpoints estão sob o prefixo `/v1/`.
 | --- | --- | --- |
 | GET | `/v1/user` | Listar todos os usuários |
 | POST | `/v1/user` | Criar usuário |
+| POST | `/v1/user/search` | Buscar usuários por nome ou e-mail |
 | GET | `/v1/user/:id` | Detalhes do usuário |
-| PUT | `/v1/user/:id` | Atualizar usuário |
-| DELETE | `/v1/user/:id` | Remover usuário |
+| GET | `/v1/user/checkemail/:email` | Verificar se e-mail já existe |
+| PUT | `/v1/user/:id` | Atualizar usuário (próprio) |
+| DELETE | `/v1/user/:id` | Remover usuário (próprio) |
 
 ### Notificações
 
@@ -374,7 +383,7 @@ Todos os endpoints estão sob o prefixo `/v1/`.
 | PUT | `/v1/notification/:id` | Alternar lido/não lido |
 | DELETE | `/v1/notification/:id` | Remover notificação |
 
-### Mídias
+### Mídias/Evidências
 
 | Método | Endpoint | Descrição |
 | --- | --- | --- |
@@ -405,10 +414,9 @@ Novos usuários podem ser cadastrados via:
 
 ## 15. Limitações atuais
 
-- O upload e a visualização de evidências ainda precisam ser refinados no frontend;
-- Não há geração de relatórios;
+- Não há geração de relatórios em formato exportável;
 - Não há exportação dos achados em PDF, CSV ou outro formato;
-- O gerenciamento de participantes de projeto está parcialmente integrado no frontend.
+- O upload de evidências aceita apenas imagens (não suporta PDFs ou outros formatos).
 
  ---
 
@@ -416,10 +424,9 @@ Novos usuários podem ser cadastrados via:
 
 - Implementar relatórios de achados por projeto;
 - Permitir exportação em PDF, CSV ou Markdown;
-- Adicionar filtros avançados por severidade, status, categoria e responsável;
-- Melhorar o painel de notificações;
-- Criar histórico de alterações dos achados;
+- Criar histórico de alterações dos achados (auditoria);
 - Associar achados a referências como CWE, OWASP Top 10 e CVE;
+- Suportar upload de documentos além de imagens (PDF, DOCX);
 - Criar um agente assistivo para sugerir correções e investigações.
 
  ---

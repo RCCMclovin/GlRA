@@ -14,13 +14,14 @@ validateEnv();
 
 const limiter = rateLimit({
  windowMs: 15 * 60 * 1000,
- max: 100,
+ max: 300,
  message: {
    error: 'Excesso de requisições, tente novamente mais tarde.',
    retryAfter: '15 minutes',
  },
  standardHeaders: true,
- legacyHeaders: false, 
+ legacyHeaders: false,
+ skip: (req) => req.method === 'GET' && req.path.startsWith('/v1/media/') && !req.path.includes('/index/'),
 });
 
 const app = express();

@@ -134,7 +134,10 @@ const doc = {
       name: "Fulano de Tal",
       createdAt: "DateTime",
       updatedAt: "DateTime",
-    }
+    },
+    SearchUser: {
+      str: "nome ou email",
+    },
 
   },
 };
