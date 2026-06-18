@@ -319,6 +319,7 @@ Todos os endpoints estão sob o prefixo `/v1/`.
 | Método | Endpoint | Descrição |
 | --- | --- | --- |
 | GET | `/v1/project` | Listar projetos do criador |
+| POST | `/v1/project/search` | Busca por projeto |
 | POST | `/v1/project` | Criar projeto |
 | GET | `/v1/project/:id` | Detalhes do projeto |
 | PUT | `/v1/project/:id` | Atualizar projeto |
@@ -338,6 +339,7 @@ Todos os endpoints estão sob o prefixo `/v1/`.
 | Método | Endpoint | Descrição |
 | --- | --- | --- |
 | GET | `/v1/finding/p/:projectId` | Achados do projeto |
+| POST | `/v1/finding/search/:projectId` | Busca por achado |
 | GET | `/v1/finding/:id` | Detalhes do achado |
 | POST | `/v1/finding` | Criar achado |
 | PUT | `/v1/finding/:id` | Atualizar achado |
@@ -355,8 +357,8 @@ Todos os endpoints estão sob o prefixo `/v1/`.
 
 | Método | Endpoint | Descrição |
 | --- | --- | --- |
-| GET | `/v1/user` | Listar todos os usuários |
-| POST | `/v1/user` | Criar usuário |
+| POST | `/v1/user/search` | Pesquisa por usuário |
+| GET | `/v1/user/checkemail/:email` | Verifica se um email já está cadastrado |
 | GET | `/v1/user/:id` | Detalhes do usuário |
 | PUT | `/v1/user/:id` | Atualizar usuário |
 | DELETE | `/v1/user/:id` | Remover usuário |
