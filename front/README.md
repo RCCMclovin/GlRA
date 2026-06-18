@@ -28,7 +28,6 @@ Depois, acesse a URL exibida no terminal.
 
 Esta etapa entrega apenas o frontend. A integração com backend, Prisma, MySQL e autenticação real deverá ser feita em etapa posterior.
 
-
 ## Ajustes da versão v4
 
 - Removido o item 'Cadastrar projeto' do menu lateral.
