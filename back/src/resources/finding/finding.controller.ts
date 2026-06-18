@@ -129,11 +129,11 @@ const create = async (req: Request, res: Response) => {
     const project = await projectService.findProjectsById(finding.projectId);
     if(project){
       await findingService.create(finding, req.session.uid as string);
-      (await projectAccessService.listUsersByProject(finding.projectId)).forEach((u)=>{
+      await Promise.all((await projectAccessService.listUsersByProject(finding.projectId)).map((u)=>{
             if(u.userId != req.session.uid){
               notificationService.create(u.userId, `Um novo achado foi adicionado no projeto ${project.title}`);
             }
-          })
+          }));
       return res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
     }else{
       return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);
@@ -178,11 +178,11 @@ const update = async (req: Request, res: Response) => {
     const project = await projectService.findProjectsById(finding.projectId) as Project;
     if(finding){
         await findingService.update(req.params.findingId as string, new_finding);
-        (await projectAccessService.listUsersByProject(finding.projectId)).forEach((u)=>{
+        await Promise.all((await projectAccessService.listUsersByProject(finding.projectId)).map((u)=>{
             if(u.userId != req.session.uid){
               notificationService.create(u.userId, `Um achado foi atualizado no projeto ${project.title}`);
             }
-          })
+          }));
         return res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
     }else{
         return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);
