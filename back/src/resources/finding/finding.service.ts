@@ -1,5 +1,6 @@
 import { PrismaClient, Finding } from '../../generated/prisma/client';
 import { FindingWhereInput } from '../../generated/prisma/models';
+import mediaService from '../media/media.service';
 import { CreateFindingDTO, SearchFinding, UpdateFindingDTO } from './finding.types';
 
 const prisma = new PrismaClient();
@@ -17,6 +18,9 @@ async function update(id: string, data: UpdateFindingDTO): Promise<void>{
 }
 
 async function remove(id: string): Promise<void>{
+    Promise.all((await mediaService.getMediaByFinding(id)).map(async (m) =>{
+        await mediaService.deleteMediaById(m.id);
+    }))
     await prisma.finding.delete({where:{id}});
 }
 

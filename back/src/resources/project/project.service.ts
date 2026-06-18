@@ -1,4 +1,5 @@
 import { PrismaClient, Project } from '../../generated/prisma/client';
+import findingService from '../finding/finding.service';
 import { ProjectDTO } from './project.types';
 
 const prisma = new PrismaClient();
@@ -29,7 +30,10 @@ async function update(id: string, data: ProjectDTO): Promise<Project>{
 
 async function remove(id: string): Promise<void>{
   await prisma.accessProject.deleteMany({where:{projectId: id}});
-  await prisma.project.delete({where:{id}});
+  const findings = await findingService.index(id);
+  Promise.all(findings.map(async (f) =>{
+   await findingService.remove(f.id);
+  })).then(async () => {await prisma.project.delete({where:{id}})});
 }
 
 async function search(text: string, userId: string): Promise<Project[]>{
