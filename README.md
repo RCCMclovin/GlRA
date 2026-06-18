@@ -405,7 +405,6 @@ Novos usuários podem ser cadastrados via:
 - O upload e a visualização de evidências ainda precisam ser refinados no frontend;
 - Não há geração de relatórios;
 - Não há exportação dos achados em PDF, CSV ou outro formato;
-- O gerenciamento de participantes de projeto está parcialmente integrado no frontend.
 
  ---
 
@@ -413,7 +412,6 @@ Novos usuários podem ser cadastrados via:
 
 - Implementar relatórios de achados por projeto;
 - Permitir exportação em PDF, CSV ou Markdown;
-- Adicionar filtros avançados por severidade, status, categoria e responsável;
 - Melhorar o painel de notificações;
 - Criar histórico de alterações dos achados;
 - Associar achados a referências como CWE, OWASP Top 10 e CVE;
