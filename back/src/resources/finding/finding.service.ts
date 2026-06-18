@@ -1,5 +1,5 @@
 import { PrismaClient, Finding } from '../../generated/prisma/client';
-import { CreateFindingDTO } from './finding.types';
+import { CreateFindingDTO, UpdateFindingDTO } from './finding.types';
 
 const prisma = new PrismaClient();
 
@@ -11,7 +11,7 @@ async function create(data: CreateFindingDTO, reporterId: string): Promise<Findi
     return await prisma.finding.create({data:{ ...data, reporterId}})
 }
 
-async function update(id: string, data: CreateFindingDTO): Promise<void>{
+async function update(id: string, data: UpdateFindingDTO): Promise<void>{
     await prisma.finding.update({where:{id}, data});
 }
 

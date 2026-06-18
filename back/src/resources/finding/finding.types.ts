@@ -10,3 +10,4 @@ export type FindingPublic = Omit<Finding,
 }
 
 export type CreateFindingDTO = Omit<Finding, 'id' | 'reporterId'>;
+export type UpdateFindingDTO = Omit<Finding, 'id' | 'reporterId' | 'projectId'>;

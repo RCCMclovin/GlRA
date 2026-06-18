@@ -6,7 +6,7 @@ import findingStatusService from '../findingStatus/fidingStatus.service';
 import findingSeverityService from '../findingSeverity/fidingSeverity.service';
 import { Project } from '../../generated/prisma/client';
 import projectService from '../project/project.service';
-import { CreateFindingDTO, FindingPublic } from './finding.types';
+import { CreateFindingDTO, FindingPublic, UpdateFindingDTO } from './finding.types';
 import userService from '../user/user.service';
 import { Finding } from '../../generated/prisma/browser';
 import projectAccessService from '../projectAccess/projectAccess.service';
@@ -151,7 +151,7 @@ const update = async (req: Request, res: Response) => {
  #swagger.parameters['findingId'] = { description: 'ID do achado' }
  #swagger.parameters['body'] = {
  in: 'body',
- schema: { $ref: '#/definitions/CreateFindingDTO' }
+ schema: { $ref: '#/definitions/UpdateFindingDTO' }
  } 
  #swagger.responses[200] = {
  description: 'Achado atualizado'
@@ -169,7 +169,10 @@ const update = async (req: Request, res: Response) => {
  description: "Internal Server Error."
  }
 */
-  const new_finding = req.body as CreateFindingDTO;
+  const new_finding = req.body as UpdateFindingDTO;
+  if("projectId" in req.body){
+    return res.status(StatusCodes.FORBIDDEN).send(ReasonPhrases.FORBIDDEN);
+  }
   try {
     const finding = await findingService.read(req.params.findingId as string) as CreateFindingDTO;
     const project = await projectService.findProjectsById(finding.projectId) as Project;

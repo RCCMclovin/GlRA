@@ -101,10 +101,9 @@ schema: [{ $ref: '#/definitions/UserDTO' }]
   try {
     const exists: boolean = await projectService.projectExists(project);
     if (exists) {
-      (await projectAccessService.listUsersByProject(project)).forEach(async (u) =>{
+      await Promise.all((await projectAccessService.listUsersByProject(project)).map(async (u) =>{
         users.push(await userService.readUser(u.userId) as UserDTO);
-      });
-      return res.status(StatusCodes.OK).json(users);
+      })).then(() => res.status(StatusCodes.OK).json(users));
     } else {
       return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);
     }
@@ -134,10 +133,9 @@ schema: [{ $ref: '#/definitions/ProjectDTO' }]
   try {
     const exists: boolean = !!(await userService.readUser(user));
     if (exists) {
-      (await projectAccessService.listProjectsByUser(user)).forEach(async (p) =>{
+      await Promise.all((await projectAccessService.listProjectsByUser(user)).map(async (p) =>{
         projects.push(await projectService.findProjectsById(p.projectId) as ProjectDTO);
-      });
-      return res.status(StatusCodes.OK).json(projects);
+      })).then(() => res.status(StatusCodes.OK).json(projects));
     } else {
       return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);
     }
