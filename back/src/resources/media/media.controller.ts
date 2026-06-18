@@ -106,13 +106,15 @@ const remove = async (req: Request, res: Response) => {
     if(!(await MediaService.getMediaById(id))){
         return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);
     }
-    if(!(await projectAccessService.hasAccess(
-        (await MediaService.getFindingByMedia(id)) as string, 
-        req.session.uid as string)
-    )){
+    const findingId = await MediaService.getFindingByMedia(id);
+    if (findingId) {
+      const finding = await findingService.read(findingId);
+      if (!finding || !(await projectAccessService.hasAccess(finding.projectId, req.session.uid as string))) {
         return res.status(StatusCodes.FORBIDDEN).send(ReasonPhrases.FORBIDDEN);
+      }
     }
     await MediaService.deleteMediaById(id);
+    return res.status(StatusCodes.OK).send(ReasonPhrases.OK);
   } catch (e) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(e);
   }

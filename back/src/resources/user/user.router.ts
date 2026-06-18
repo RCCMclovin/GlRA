@@ -1,15 +1,15 @@
 import { Router } from 'express';
 import userController from './user.controller';
-import { SearchUserSchema, userSchema } from './user.schema';
+import { userSchema, searchUserSchema } from './user.schema';
 import { validate } from '../../middlewares/validate';
 import isAuth from '../../middlewares/isAuth';
 import isSelf from '../../middlewares/isSelf';
 
 const router = Router();
 
-//router.get('/', userController.index);
-//router.post('/', validate(userSchema), userController.create);
-router.post('/search', isAuth, validate(SearchUserSchema), userController.search);
+router.get('/', isAuth, userController.index);
+router.post('/search', isAuth, validate(searchUserSchema), userController.search);
+router.post('/', isAuth, validate(userSchema), userController.create);
 router.get('/checkemail/:email', userController.checkEmail);
 router.get('/:userId', isAuth, userController.read);
 router.put(

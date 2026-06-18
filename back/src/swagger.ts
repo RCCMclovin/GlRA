@@ -13,6 +13,11 @@ const doc = {
   definitions: {
     Auth: {
       msg: 'Usuário autenticado',
+      user: {
+        id: 'f0a39296-e785-4567-a2ae-1d7e52e04689',
+        name: 'Fulano de Tal',
+        email: 'email@example.com',
+      },
     },
     AuthDTO: {
       email: 'email@example.com',
@@ -65,12 +70,6 @@ const doc = {
         severityId: "3491ec2f-f2dc-4b7b-8cea-47155d2d6087",
         categoryId: "2a97ec94-d91c-49bc-95c5-42decebc0a88"
     },
-    SearchFinding:{
-        title: "Optional Text",
-        statusId: "Optional UUID",
-        severityId: "Optional UUID",
-        categoryId: "Optional UUID"
-    },
     MediaDTO: "Binary",
     Media:{
       id: "a8c2c506-9039-40e2-8071-15501d60e4c7",
@@ -95,12 +94,20 @@ const doc = {
         receiverId: "8cdebdfd-122c-4b03-af73-1009a621dfd4",
         read: true
     },
+    SearchFinding:{
+        title: "SQL",
+        categoryId: "550e8400-e29b-41d4-a716-446655440001",
+        severityId: "9b0d4433-7920-428d-a4a5-5357d678028e",
+        statusId: "7ddebb7b-c06c-4b18-bf1e-deda9b99f3b3",
+        assignedId: "49389be7-c132-452c-a2d3-80c7a6fdf790",
+        reporterId: "49389be7-c132-452c-a2d3-80c7a6fdf790",
+    },
+    SearchProject:{
+        title: "Portal",
+    },
     ProjectDTO:{
         title: "Text",
         description: "Text",
-    },
-    SearchProject:{
-        title: "Text",
     },
     Project:{
       id: '98ec6545-23d1-4d9e-a565-0c7452b45a8b',
@@ -127,9 +134,6 @@ const doc = {
       name: "Fulano de Tal",
       createdAt: "DateTime",
       updatedAt: "DateTime",
-    },
-    SearchUser: {
-      str: "Nome ou email"
     }
 
   },

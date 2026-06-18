@@ -9,8 +9,8 @@ import isOwner from '../../middlewares/isOwner';
 const router = Router();
 
 router.get('/', isAuth, projectController.index);
-router.post('/', isAuth, validate(projectSchema), projectController.create);
 router.post('/search', isAuth, validate(searchProjectSchema), projectController.search);
+router.post('/', isAuth, validate(projectSchema), projectController.create);
 router.put('/:projectId', hasAccess, validate(projectSchema), projectController.update);
 router.delete('/:projectId', isOwner, projectController.remove);
 router.get('/:projectId', hasAccess, projectController.read);

@@ -41,7 +41,8 @@ schema: { $ref: '#/definitions/Auth' }
      }
 
      return res.status(StatusCodes.OK).send({
-       "msg": "Usuário autenticado"
+       msg: "Usuário autenticado",
+       user: { id: data.uid, name: data.name, email: data.email }
      });
    });
  } else {
@@ -126,4 +127,19 @@ const signUp = async (req: Request, res: Response) => {
   }
 };
 
-export default { login, logout, signUp };
+const me = async (req: Request, res: Response) => {
+  /*
+ #swagger.tags = ["Auth"]
+ #swagger.summary = 'Retorna dados do usuário logado.'
+ #swagger.responses[200] = { schema: { $ref: '#/definitions/LoginDTO' } }
+ #swagger.responses[401] = { description: 'Usuário não logado.' }
+*/
+  if (!req.session.uid)
+    return res.status(StatusCodes.UNAUTHORIZED).send(ReasonPhrases.UNAUTHORIZED);
+  const user = await userService.readUser(req.session.uid);
+  if (!user)
+    return res.status(StatusCodes.UNAUTHORIZED).send(ReasonPhrases.UNAUTHORIZED);
+  return res.json({ id: user.id, name: user.name, email: user.email });
+};
+
+export default { login, logout, signUp, me };

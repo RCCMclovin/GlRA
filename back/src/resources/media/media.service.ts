@@ -43,11 +43,11 @@ async function getMediaById(id: string): Promise<string> {
 }
 
 async function getMediaByFinding(findingId: string): Promise<Media[]>{
-    const medias: Media[] = [];
-    (await prisma.findingMedia.findMany({where:{findingId}})).forEach(async (m) =>{
-        medias.push(await prisma.media.findUnique({where:{id:m.mediaId}}) as Media);
-    })
-    return medias;
+    const links = await prisma.findingMedia.findMany({where:{findingId}});
+    const medias = await Promise.all(
+        links.map((m) => prisma.media.findUnique({where:{id:m.mediaId}}))
+    );
+    return medias.filter((m): m is Media => m !== null);
 }
 
 async function getFindingByMedia(mediaId: string): Promise<string | null>{

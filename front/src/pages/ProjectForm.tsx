@@ -42,7 +42,7 @@ export function ProjectForm({ initialProject, onSaveProject, onNavigate }: Proje
       <form className="form-card project-form" onSubmit={handleSubmit}>
         <label>
           Título do projeto
-          <input name="title" placeholder="Ex.: Portal Acadêmico" defaultValue={initialProject?.title} required />
+          <input name="title" placeholder="Ex.: Portal Acadêmico" defaultValue={initialProject?.title} minLength={3} required />
         </label>
         <label>
           Descrição

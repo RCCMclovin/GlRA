@@ -6,6 +6,6 @@ export const userSchema = Joi.object().keys({
   password: Joi.string().min(3).max(40),
 });
 
-export const SearchUserSchema = Joi.object().keys({
+export const searchUserSchema = Joi.object().keys({
   str: Joi.string().max(40).required(),
 });

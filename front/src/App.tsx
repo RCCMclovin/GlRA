@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { FindingDetails } from './pages/FindingDetails';
@@ -27,36 +27,47 @@ function App() {
 
   const [selectedFindingId, setSelectedFindingId] = useState<string | undefined>();
   const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  useEffect(() => {
+    api.getMe()
+      .then(async (user) => {
+        setCurrentUser(user);
+        setView('dashboard');
+        await loadAllData();
+      })
+      .catch(() => {
+        setLoading(false);
+      })
+      .finally(() => setCheckingSession(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const unreadNotifications = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
   const loadAllData = useCallback(async () => {
     setLoading(true);
     try {
-      const [projectsData, notificationsData, severitiesData, statusesData, categoriesData] = await Promise.all([
+      const [projectsData, notificationsData, severitiesData, statusesData, categoriesData, usersData] = await Promise.all([
         api.getMyProjects(),
         api.getNotifications(),
         api.getSeverities(),
         api.getStatuses(),
         api.getCategories(),
+        api.getUsers().catch(() => [] as User[]),
       ]);
       setProjects(projectsData);
       setNotifications(notificationsData);
       setSeverities(severitiesData);
       setStatuses(statusesData);
       setCategories(categoriesData);
+      setUsers(usersData);
 
       const allFindings = (await Promise.all(
         projectsData.map((p) => api.getProjectFindings(p.id).catch(() => []))
       )).flat();
       setFindings(allFindings);
-
-      try {
-        setUsers(await api.getUsers());
-      } catch {
-        /* user list route may be restricted */
-      }
     } finally {
       setLoading(false);
     }
@@ -133,6 +144,17 @@ function App() {
   async function handleToggleNotification(id: number) {
     await api.toggleNotificationRead(id);
     setNotifications(await api.getNotifications());
+  }
+
+  async function handleDeleteNotification(id: number) {
+    await api.deleteNotification(id);
+    setNotifications(await api.getNotifications());
+  }
+
+  if (checkingSession || (loading && view === 'login')) {
+    return (
+      <section className="empty-state"><h1>Carregando...</h1></section>
+    );
   }
 
   if (view === 'login') {
@@ -220,7 +242,7 @@ function App() {
       )}
       {view === 'users' && <UsersPage users={users} onCreateUser={handleCreateUser} />}
       {view === 'notifications' && (
-        <Notifications notifications={notifications} projects={projects} onToggleRead={handleToggleNotification} />
+        <Notifications notifications={notifications} projects={projects} onToggleRead={handleToggleNotification} onDelete={handleDeleteNotification} />
       )}
     </Layout>
   );

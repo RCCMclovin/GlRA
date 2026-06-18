@@ -1,36 +1,70 @@
 networks:
-  network2:
+  gira-network:
     driver: bridge
 
 volumes:
+  mysql-data:
   output-data:
 
 services:
+  db:
+    image: mysql:8.0
+    container_name: gira-db
+    restart: unless-stopped
+    networks:
+      - gira-network
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: gira
+      MYSQL_USER: gira
+      MYSQL_PASSWORD: gira123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   backend:
-    container_name: "gira-backend"
-    hostname: "gira-backend"
-    build: 
+    container_name: gira-backend
+    hostname: gira-backend
+    build:
       context: ./back
       dockerfile: ./Dockerfile
     networks:
-      - network2
+      - gira-network
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: "3333"
+      NODE_ENV: development
+      DATABASE_URL: mysql://gira:gira123@db:3306/gira
+      SESSION_SECRET: gira-session-secret-docker
+      DEFAULT_LANGUAGE: pt-BR
+      HOST: localhost:3333
+      PUBLIC_PATH: ./output
+      CORS_ORIGIN: http://localhost:3001,http://localhost:5173
+      DB_HOST: db
     volumes:
       - output-data:/app/output
-    restart:
-      unless-stopped 
+    restart: unless-stopped
     ports:
-      - 192.168.1.10:3333:3333
+      - "3333:3333"
+
   frontend:
-    container_name: "gira-frontend"
-    hostname: "gira-frontend"
+    container_name: gira-frontend
+    hostname: gira-frontend
     build:
       context: ./front
       dockerfile: ./Dockerfile
     networks:
-      - network2
-    volumes:
-      - output-data:/app/output
-    restart:
-      unless-stopped
+      - gira-network
+    depends_on:
+      - backend
+    restart: unless-stopped
     ports:
-      - 192.168.1.10:3001:80
+      - "3001:80"

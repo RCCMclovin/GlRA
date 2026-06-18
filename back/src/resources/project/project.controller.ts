@@ -154,33 +154,27 @@ const read = async (req: Request, res: Response) => {
   }
 };
 
+
 const search = async (req: Request, res: Response) => {
   /*
  #swagger.tags = ["Projetos"]
- #swagger.summary = 'Busca por projetos do usuário logado.'
+ #swagger.summary = 'Busca projetos do usuário logado por título.'
  #swagger.parameters['body'] = {
  in: 'body',
  schema: { $ref: '#/definitions/SearchProject' }
- } 
- #swagger.responses[200] = {
- schema: [{ $ref: '#/definitions/Project' }]
  }
- #swagger.responses[403] = {
- description: 'User unautorized.'
- }
- #swagger.responses[500] = {
- description: "Internal Server Error"
- }
+ #swagger.responses[200] = { schema: [{ $ref: '#/definitions/Project' }] }
+ #swagger.responses[403] = { description: 'User unautorized.' }
+ #swagger.responses[500] = { description: "Internal Server Error" }
 */
-const searchTerms = req.body as SearchProject;
+  const searchTerms = req.body as SearchProject;
   try {
-    const projects = await projectService.search(searchTerms.title,req.session.uid as string);
+    const projects = await projectService.search(searchTerms.title, req.session.uid as string);
     return res.json(projects);
   } catch (e) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(e);
   }
 };
-
 
 export default {
     index,

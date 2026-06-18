@@ -10,7 +10,16 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
   if (!res.ok) {
     const text = await res.text().catch(() => res.statusText);
-    throw new Error(text || `${res.status}`);
+    let msg = text || `Erro ${res.status}`;
+    try {
+      const parsed = JSON.parse(text);
+      if (Array.isArray(parsed) && parsed[0]?.message) {
+        msg = parsed.map((e: { message: string }) => e.message).join('. ');
+      } else if (parsed?.msg) {
+        msg = parsed.msg;
+      }
+    } catch { /* not JSON */ }
+    throw new Error(msg);
   }
   const text = await res.text();
   if (!text) return null as T;
@@ -34,6 +43,10 @@ export function signup(name: string, email: string, password: string) {
 
 export function apiLogout() {
   return request<void>('/auth/logout', { method: 'POST' });
+}
+
+export function getMe() {
+  return request<User>('/auth/me');
 }
 
 // Projects
@@ -148,6 +161,10 @@ export function createUser(data: { name: string; email: string; password: string
   return request<void>('/user', { method: 'POST', body: JSON.stringify(data) });
 }
 
+export function searchUsers(str: string) {
+  return request<User[]>('/user/search', { method: 'POST', body: JSON.stringify({ str }) });
+}
+
 // Lookups
 export function getSeverities() {
   return request<Lookup[]>('/findingSeverity');
@@ -172,4 +189,31 @@ export function toggleNotificationRead(id: number) {
 
 export function deleteNotification(id: number) {
   return request<void>(`/notification/${id}`, { method: 'DELETE' });
+}
+
+// Media
+export type MediaItem = {
+  id: string;
+  name: string;
+  link: string;
+  createdAt: string;
+};
+
+export async function getMediaForFinding(findingId: string) {
+  return request<MediaItem[]>(`/media/index/${findingId}`);
+}
+
+export async function uploadMedia(findingId: string, file: File): Promise<MediaItem> {
+  const res = await fetch(`${API}/media/${findingId}`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': file.type },
+    body: file,
+  });
+  if (!res.ok) throw new Error(`Upload falhou: ${res.status}`);
+  return res.json();
+}
+
+export async function deleteMedia(mediaId: string) {
+  return request<void>(`/media/${mediaId}`, { method: 'DELETE' });
 }

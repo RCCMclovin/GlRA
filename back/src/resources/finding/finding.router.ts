@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import hasAccess from '../../middlewares/hasAccess';
-import findingController from './finding.controller';
 import { validate } from '../../middlewares/validate';
-import { findingSchema, searchFindingSchema, updateFindingSchema } from './finding.schema';
-
+import { findingSchema, updateFindingSchema, searchFindingSchema } from './finding.schema';
+import findingController from './finding.controller';
 
 const router = Router();
 

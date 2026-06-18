@@ -73,14 +73,14 @@ async function toCard(id: string): Promise<CardUser>{
   return (await prisma.user.findUnique({where:{id}, select:{id:true, name:true}})) as CardUser;
 }
 
-async function search(data: SearchUser): Promise<User[]>{
-  const users = await prisma.user.findMany({where:{name:{contains:data.str}}})
-  return await Promise.all((await prisma.user.findMany({where:{email:{contains:data.str}}}))
-  .map((u) =>{
-    const isIncluded: boolean = users.map(obj => (JSON.stringify(obj)))
-    .includes(JSON.stringify(u));
-    if(!isIncluded) users.push(u);
-  })).then(() => {return users});
+async function search(data: SearchUser): Promise<UserDTO[]> {
+  const byName = await prisma.user.findMany({ where: { name: { contains: data.str } } });
+  const byEmail = await prisma.user.findMany({ where: { email: { contains: data.str } } });
+  const seen = new Set(byName.map((u) => u.id));
+  for (const u of byEmail) {
+    if (!seen.has(u.id)) byName.push(u);
+  }
+  return byName.map(({ password: _, ...u }) => u);
 }
 
 export default {

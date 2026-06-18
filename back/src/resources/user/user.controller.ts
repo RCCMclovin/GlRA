@@ -165,30 +165,18 @@ const checkEmail = async (req: Request, res: Response) => {
 const search = async (req: Request, res: Response) => {
   /*
  #swagger.tags = ["Usuários"]
- #swagger.summary = 'Busca por usuários.'
- #swagger.parameters['body'] = {
- in: 'body',
- schema: { $ref: '#/definitions/SearchUser' }
- } 
- #swagger.responses[200] = {
- schema: [{ $ref: '#/definitions/UserDTO' }]
- }
- #swagger.responses[403] = {
- description: 'User unautorized.'
- }
- #swagger.responses[422] = {
- description:  'Body inválido.'
- }
- #swagger.responses[500] = {
- description: "Internal Server Error"
- }
+ #swagger.summary = 'Busca usuários por nome ou e-mail.'
+ #swagger.parameters['body'] = { in: 'body', schema: { str: 'texto' } }
+ #swagger.responses[200] = { schema: [{ $ref: '#/definitions/UserDTO' }] }
+ #swagger.responses[401] = { description: 'Não autenticado.' }
+ #swagger.responses[500] = { description: "Internal Server Error" }
 */
-const body = req.body as SearchUser;
   try {
-    const users = await userService.search(body);
+    const data = req.body as SearchUser;
+    const users = await userService.search(data);
     return res.json(users);
   } catch (e) {
-    return res.status(500).json(e);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(e);
   }
 };
 

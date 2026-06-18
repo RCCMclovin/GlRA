@@ -1,6 +1,4 @@
 import { PrismaClient, Finding } from '../../generated/prisma/client';
-import { FindingWhereInput } from '../../generated/prisma/models';
-import mediaService from '../media/media.service';
 import { CreateFindingDTO, SearchFinding, UpdateFindingDTO } from './finding.types';
 
 const prisma = new PrismaClient();
@@ -18,9 +16,6 @@ async function update(id: string, data: UpdateFindingDTO): Promise<void>{
 }
 
 async function remove(id: string): Promise<void>{
-    Promise.all((await mediaService.getMediaByFinding(id)).map(async (m) =>{
-        await mediaService.deleteMediaById(m.id);
-    }))
     await prisma.finding.delete({where:{id}});
 }
 
@@ -28,23 +23,16 @@ async function read(id: string): Promise<Finding | null>{
     return await prisma.finding.findUnique({where:{id}});
 }
 
-async function search(data: SearchFinding, projectId: string) {
-    const where: FindingWhereInput= {projectId};
-    if(data.title){
-        where.title = {contains: data.title};
-    }
-    if(data.categoryId){
-        where.categoryId = data.categoryId;
-    }
-    if(data.severityId){
-        where.severityId = data.severityId;
-    }
-    if(data.statusId){
-        where.statusId = data.statusId;
-    }
-    return await prisma.finding.findMany({
-        where:where,
-    })
+async function search(data: SearchFinding, projectId: string): Promise<Finding[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = { projectId };
+    if (data.title) where.title = { contains: data.title };
+    if (data.categoryId) where.categoryId = data.categoryId;
+    if (data.severityId) where.severityId = data.severityId;
+    if (data.statusId) where.statusId = data.statusId;
+    if (data.assignedId) where.assignedId = data.assignedId;
+    if (data.reporterId) where.reporterId = data.reporterId;
+    return await prisma.finding.findMany({ where });
 }
 
 export default {
@@ -53,5 +41,5 @@ export default {
     update,
     remove,
     read,
-    search
+    search,
 }

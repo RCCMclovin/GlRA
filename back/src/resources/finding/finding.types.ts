@@ -13,8 +13,10 @@ export type CreateFindingDTO = Omit<Finding, 'id' | 'reporterId'>;
 export type UpdateFindingDTO = Omit<Finding, 'id' | 'reporterId' | 'projectId'>;
 
 export type SearchFinding = {
-    title?:string,
-    categoryId?:string,
-    severityId?:string,
-    statusId?:string,
+    title?: string;
+    categoryId?: string;
+    severityId?: string;
+    statusId?: string;
+    assignedId?: string;
+    reporterId?: string;
 };
