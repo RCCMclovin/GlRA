@@ -1,16 +1,11 @@
 <div align="center">
-  <br/>
 
-  <strong>GlRA — Gestão de Achados de Segurança</strong>
+# GlRA — Gestão de Achados de Segurança
 
-  <br/><br/>
-
-  <img alt="Trilha" src="https://img.shields.io/badge/Trilha-VulnCase-3F9B63?style=for-the-badge"/>
-  <img alt="Frontend" src="https://img.shields.io/badge/Frontend-React%20%2B%20TypeScript-4F74E8?style=for-the-badge"/>
-  <img alt="Backend" src="https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-172433?style=for-the-badge"/>
-  <img alt="Banco" src="https://img.shields.io/badge/Persistência-Prisma%20%2B%20MySQL-C78E18?style=for-the-badge"/>
-
-  <br/><br/>
+  ![Trilha](https://img.shields.io/badge/Trilha-VulnCase-3F9B63?style=for-the-badge)
+  ![Frontend](https://img.shields.io/badge/Frontend-React%20%2B%20TypeScript-4F74E8?style=for-the-badge)
+  ![Backend](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-172433?style=for-the-badge)
+  ![Banco](https://img.shields.io/badge/Persistência-Prisma%20%2B%20MySQL-C78E18?style=for-the-badge)
 
   Ferramenta acadêmica para cadastro, organização e acompanhamento de achados de segurança em projetos.
 </div>
@@ -41,7 +36,7 @@
 
 ## 1. Nome da ferramenta
 
-**GlRA**
+- GlRA
 
 A ferramenta foi desenvolvida no contexto do **Projeto Integrador**, dentro da trilha **VulnCase**.
 
@@ -60,7 +55,7 @@ A ferramenta foi desenvolvida no contexto do **Projeto Integrador**, dentro da t
 
 ## 3. Trilha escolhida
 
-**Trilha 3 — VulnCase**
+- Trilha 3 — VulnCase
 
 A trilha escolhida tem como foco o desenvolvimento de uma ferramenta para organização, acompanhamento e gestão de achados de segurança.
 
@@ -431,9 +426,3 @@ Repositório final do projeto:
 **<https://github.com/RCCMclovin/GlRA>**
 
  ---
-
-<div align="center">
-
-**GlRA — Projeto Integrador · Trilha 3 · VulnCase**
-
-</div>
