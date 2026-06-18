@@ -1,4 +1,4 @@
-<<div align="center">>
+<div align="center">
 
 # GlRA — Gestão de Achados de Segurança
 
