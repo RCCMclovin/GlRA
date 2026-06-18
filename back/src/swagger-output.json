@@ -113,7 +113,7 @@
             "type": "string"
           },
           {
-            "name": "ProjecId",
+            "name": "projecId",
             "description": "ID do projeto",
             "in": "query",
             "type": "string"

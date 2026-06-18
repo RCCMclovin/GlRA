@@ -16,7 +16,7 @@ const index = async (req: Request, res: Response) => {
   /*
  #swagger.tags = ["Achados"]
  #swagger.summary = 'Recupera dados de todos os achados de um projeto.'
- #swagger.parameters['ProjecId'] = { description: 'ID do projeto' }
+ #swagger.parameters['projecId'] = { description: 'ID do projeto' }
  #swagger.responses[200] = {
  schema: [{ $ref: '#/definitions/FindingPublic' }]
  }
@@ -34,7 +34,7 @@ const index = async (req: Request, res: Response) => {
      const project = await projectService.findProjectsById(req.params.projectId as string) as Project;
       if(project){
           const findings: FindingPublic[] = [];
-          (await findingService.index(project.id)).forEach(async (f) => {
+          await Promise.all((await findingService.index(project.id)).map(async (f) => {
             const public_fiding: FindingPublic = {
                 id:f.id,
                 title:f.title,
@@ -48,8 +48,8 @@ const index = async (req: Request, res: Response) => {
                 assigned: await userService.toCard(f.assignedId),
             }
             findings.push(public_fiding);
-          });
-          return res.status(StatusCodes.OK).json(findings);
+          })).finally(() => res.status(StatusCodes.OK).json(findings));
+          
       }else{
           return res.status(StatusCodes.NOT_ACCEPTABLE).send(ReasonPhrases.NOT_ACCEPTABLE);
       }
