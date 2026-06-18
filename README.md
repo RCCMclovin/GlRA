@@ -94,12 +94,12 @@ O **GlRA** é uma aplicação web full-stack composta por:
 
 - Tela de login com autenticação real via API;
 - Dashboard do usuário logado com dados do backend;
-- Listagem e cadastro de projetos;
+- Busca, listagem e cadastro de projetos;
 - Detalhes de projeto com achados associados;
-- Listagem, cadastro e edição de achados;
+- Busca, listagem, cadastro e edição de achados;
 - Detalhes do achado com atualização de status;
 - Exibição de severidade, status, categoria CWE, responsável;
-- Cadastro de usuários;
+- Busca e cadastro de usuários;
 - Notificações com marcação de leitura;
 - Todas as operações CRUD conectadas à API REST.
 
