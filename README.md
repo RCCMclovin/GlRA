@@ -404,7 +404,6 @@ Novos usuários podem ser cadastrados via:
 
 - O upload e a visualização de evidências ainda precisam ser refinados no frontend (Limitadas a imagens);
 - Não há geração de relatórios;
-- Não há exportação dos achados em PDF, CSV ou outro formato;
 
  ---
 
