@@ -12,7 +12,7 @@ const grant = async (req: Request, res: Response) => {
   /*
  #swagger.tags = ["Project Access"]
  #swagger.summary = 'Adiciona um novo usuário no projeto.'
- #swagger.parameters['ProjectId'] = { description: 'ID do projeto' }
+ #swagger.parameters['projectId'] = { description: 'ID do projeto' }
  #swagger.parameters['userId'] = { description: 'ID do usuário a ser adicionado' }
  #swagger.responses[201] = {
  description: 'Usuário Adicionado'
@@ -47,7 +47,7 @@ const remove = async (req: Request, res: Response) => {
   /*
  #swagger.tags = ["Project Access"]
  #swagger.summary = 'Remove um usuário de um projeto.'
- #swagger.parameters['ProjectId'] = { description: 'ID do projeto' }
+ #swagger.parameters['projectId'] = { description: 'ID do projeto' }
  #swagger.parameters['userId'] = { description: 'ID do usuário a ser adicionado' }
  #swagger.responses[200] = {
  description: 'Usuário removido'
@@ -82,7 +82,7 @@ const listUsersByProject = async (req: Request, res: Response) => {
   /*
  #swagger.tags = ["Project Access"]
  #swagger.summary = 'Lista os usuários com acesso a um projeto.'
- #swagger.parameters['ProjectId'] = { description: 'ID do projeto' }
+ #swagger.parameters['projectId'] = { description: 'ID do projeto' }
  #swagger.responses[200] = {
 schema: [{ $ref: '#/definitions/UserDTO' }]
  }

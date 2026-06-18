@@ -849,7 +849,7 @@
         }
       }
     },
-    "/v1/projectAccess/p/{projectId}/u/{UserId}": {
+    "/v1/projectAccess/p/{projectId}/u/{userId}": {
       "post": {
         "tags": [
           "Project Access"
@@ -861,25 +861,15 @@
             "name": "projectId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "ProjectId",
-            "description": "ID do projeto",
-            "in": "query",
-            "type": "string"
+            "type": "string",
+            "description": "ID do projeto"
           },
           {
             "name": "userId",
-            "description": "ID do usuário a ser adicionado",
-            "in": "query",
-            "type": "string"
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do usuário a ser adicionado"
           }
         ],
         "responses": {
@@ -908,25 +898,15 @@
             "name": "projectId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "UserId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "ProjectId",
-            "description": "ID do projeto",
-            "in": "query",
-            "type": "string"
+            "type": "string",
+            "description": "ID do projeto"
           },
           {
             "name": "userId",
-            "description": "ID do usuário a ser adicionado",
-            "in": "query",
-            "type": "string"
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID do usuário a ser adicionado"
           }
         ],
         "responses": {
@@ -957,13 +937,8 @@
             "name": "projectId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "ProjectId",
-            "description": "ID do projeto",
-            "in": "query",
-            "type": "string"
+            "type": "string",
+            "description": "ID do projeto"
           }
         ],
         "responses": {
