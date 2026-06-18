@@ -26,7 +26,7 @@ async function main() {
       { id: FindingStatus.in_progress, name: 'Em correção' },
       { id: FindingStatus.completed, name: 'Corrigido' },
       { id: FindingStatus.false_positive, name: 'Falso positivo' },
-      { id: FindingStatus.info_needed, name: 'Aceito como risco' },
+      { id: FindingStatus.info_needed, name: 'Necessita Informações' },
       { id: FindingStatus.queued, name: 'Na fila' },
       { id: FindingStatus.cancelled, name: 'Cancelado' },
     ],
@@ -84,7 +84,7 @@ async function main() {
         password,
       },
     });
-    console.log('Usuário padrão criado (admin@gira.com / 123456).');
+    //console.log('Usuário padrão criado (admin@gira.com / 123456).');
   } else {
     console.log('Usuário padrão já existe.');
   }
