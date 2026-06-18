@@ -7,7 +7,7 @@ import isSelf from '../../middlewares/isSelf';
 
 const router = Router();
 
-router.get('/', userController.index);
+//router.get('/', userController.index);
 //router.post('/', validate(userSchema), userController.create);
 router.get('/checkemail/:email', userController.checkEmail);
 router.get('/:userId', isAuth, userController.read);
