@@ -1,6 +1,6 @@
 import type { Finding, Lookup, Notification, Project, User } from './types';
 
-const API = 'https://glraback.rcchome.com.br/v1';
+const API = '/v1';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API}${path}`, {
