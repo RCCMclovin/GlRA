@@ -4,6 +4,7 @@ networks:
 
 volumes:
   output-data:
+  public-data:
 
 services:
   backend:
@@ -16,6 +17,7 @@ services:
       - network2
     volumes:
       - output-data:/app/output
+      - public-data:/app/public
     restart:
       unless-stopped 
     ports:
