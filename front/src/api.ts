@@ -13,7 +13,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new Error(text || `${res.status}`);
   }
   const text = await res.text();
-  return text ? JSON.parse(text) : (null as T);
+  if (!text) return null as T;
+  try { return JSON.parse(text); } catch { return null as T; }
 }
 
 // Auth

@@ -533,3 +533,132 @@ dd { margin: 4px 0 0; line-height: 1.45; }
     justify-content: flex-start;
   }
 }
+
+/* Autocomplete */
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  z-index: 10;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.autocomplete-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  gap: 12px;
+}
+.autocomplete-item:hover {
+  background: var(--primary-soft);
+}
+.autocomplete-item span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+/* Charts */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.donut-chart-container,
+.progress-chart-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.donut-chart {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+.donut-hole {
+  position: absolute;
+  inset: 25px;
+  background: var(--surface);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.donut-hole strong {
+  font-size: 1.6rem;
+  letter-spacing: -0.03em;
+}
+.donut-hole span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.donut-legend {
+  display: grid;
+  gap: 8px;
+  flex: 1;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-item strong {
+  margin-left: auto;
+}
+
+.progress-ring {
+  width: 140px;
+  height: 140px;
+  position: relative;
+  flex-shrink: 0;
+}
+.progress-ring svg {
+  width: 100%;
+  height: 100%;
+}
+.progress-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.progress-label strong {
+  font-size: 1.6rem;
+  letter-spacing: -0.03em;
+}
+.progress-label span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+@media (max-width: 900px) {
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+  .donut-chart-container,
+  .progress-chart-container {
+    flex-direction: column;
+  }
+}

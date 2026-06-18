@@ -191,6 +191,7 @@ function App() {
           severities={severities}
           statuses={statuses}
           categories={categories}
+          preselectedProjectId={selectedProjectId}
           onSaveFinding={handleSaveFinding}
           onNavigate={setView}
         />

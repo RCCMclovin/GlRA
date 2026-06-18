@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import * as api from '../api';
 import type { CreateFindingPayload, UpdateFindingPayload } from '../api';
 import type { Finding, Lookup, Project, User, View } from '../types';
 
@@ -9,18 +10,31 @@ type FindingFormProps = {
   statuses: Lookup[];
   categories: Lookup[];
   initialFinding?: Finding;
+  preselectedProjectId?: string;
   onSaveFinding: (payload: CreateFindingPayload | UpdateFindingPayload, findingId?: string) => Promise<void>;
   onNavigate: (view: View) => void;
 };
 
-export function FindingForm({ projects, users, severities, statuses, categories, initialFinding, onSaveFinding, onNavigate }: FindingFormProps) {
+export function FindingForm({ projects, severities, statuses, categories, initialFinding, preselectedProjectId, onSaveFinding, onNavigate }: FindingFormProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [projectParticipants, setProjectParticipants] = useState<User[]>([]);
+
+  const fixedProjectId = initialFinding?.projectId ?? preselectedProjectId ?? projects[0]?.id ?? '';
+  const [selectedProjectId, setSelectedProjectId] = useState(fixedProjectId);
+  const isEditing = !!initialFinding;
 
   const initialSeverityId = initialFinding ? severities.find((s) => s.name === initialFinding.severity)?.id : severities[0]?.id;
   const initialStatusId = initialFinding ? statuses.find((s) => s.name === initialFinding.status)?.id : statuses[0]?.id;
   const initialCategoryId = initialFinding ? categories.find((c) => c.name === initialFinding.category)?.id : categories[0]?.id;
-  const initialAssignedId = initialFinding ? initialFinding.assigned.id : users[0]?.id;
+  const initialAssignedId = initialFinding ? initialFinding.assigned.id : '';
+
+  useEffect(() => {
+    if (!selectedProjectId) return;
+    api.getProjectUsers(selectedProjectId)
+      .then(setProjectParticipants)
+      .catch(() => setProjectParticipants([]));
+  }, [selectedProjectId]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -29,7 +43,7 @@ export function FindingForm({ projects, users, severities, statuses, categories,
     const form = new FormData(event.currentTarget);
 
     try {
-      if (initialFinding) {
+      if (isEditing) {
         const payload: UpdateFindingPayload = {
           title: String(form.get('title')),
           description: String(form.get('description')),
@@ -39,7 +53,7 @@ export function FindingForm({ projects, users, severities, statuses, categories,
           statusId: String(form.get('statusId')),
           categoryId: String(form.get('categoryId')),
         };
-        await onSaveFinding(payload, initialFinding.id);
+        await onSaveFinding(payload, initialFinding!.id);
       } else {
         const payload: CreateFindingPayload = {
           title: String(form.get('title')),
@@ -49,7 +63,7 @@ export function FindingForm({ projects, users, severities, statuses, categories,
           severityId: String(form.get('severityId')),
           statusId: String(form.get('statusId')),
           categoryId: String(form.get('categoryId')),
-          projectId: String(form.get('projectId')),
+          projectId: selectedProjectId,
         };
         await onSaveFinding(payload);
       }
@@ -60,12 +74,14 @@ export function FindingForm({ projects, users, severities, statuses, categories,
     }
   }
 
+  const currentProject = projects.find((p) => p.id === selectedProjectId);
+
   return (
     <section>
       <header className="page-header compact">
         <div>
-          <span className="eyebrow">{initialFinding ? 'Edição de achado' : 'Cadastro de achado'}</span>
-          <h1>{initialFinding ? 'Editar achado' : 'Cadastrar achado'}</h1>
+          <span className="eyebrow">{isEditing ? 'Edição de achado' : 'Cadastro de achado'}</span>
+          <h1>{isEditing ? 'Editar achado' : 'Cadastrar achado'}</h1>
           <p>Registro estruturado de vulnerabilidade vinculada a um projeto.</p>
         </div>
       </header>
@@ -77,10 +93,10 @@ export function FindingForm({ projects, users, severities, statuses, categories,
         </label>
         <label>
           Projeto
-          {initialFinding ? (
-            <input value={projects.find((p) => p.id === initialFinding.projectId)?.title ?? ''} disabled />
+          {isEditing || preselectedProjectId ? (
+            <input value={currentProject?.title ?? ''} disabled />
           ) : (
-            <select name="projectId" defaultValue={projects[0]?.id}>
+            <select value={selectedProjectId} onChange={(e) => setSelectedProjectId(e.target.value)}>
               {projects.map((p) => <option value={p.id} key={p.id}>{p.title}</option>)}
             </select>
           )}
@@ -105,9 +121,13 @@ export function FindingForm({ projects, users, severities, statuses, categories,
         </label>
         <label>
           Responsável
-          <select name="assignedId" defaultValue={initialAssignedId}>
-            {users.map((u) => <option value={u.id} key={u.id}>{u.name}</option>)}
-          </select>
+          {projectParticipants.length === 0 ? (
+            <select disabled><option>Carregando participantes...</option></select>
+          ) : (
+            <select name="assignedId" defaultValue={initialAssignedId || projectParticipants[0]?.id}>
+              {projectParticipants.map((u) => <option value={u.id} key={u.id}>{u.name}</option>)}
+            </select>
+          )}
         </label>
         <label className="full-row">
           Descrição técnica
@@ -121,9 +141,9 @@ export function FindingForm({ projects, users, severities, statuses, categories,
         {error && <small className="full-row" style={{ color: 'var(--red)' }}>{error}</small>}
 
         <div className="form-actions full-row">
-          <button className="ghost-button" type="button" onClick={() => onNavigate(initialFinding ? 'finding-details' : 'findings')}>Cancelar</button>
-          <button className="primary-button" type="submit" disabled={saving}>
-            {saving ? 'Salvando...' : (initialFinding ? 'Salvar alterações' : 'Salvar achado')}
+          <button className="ghost-button" type="button" onClick={() => onNavigate(isEditing ? 'finding-details' : 'findings')}>Cancelar</button>
+          <button className="primary-button" type="submit" disabled={saving || projectParticipants.length === 0}>
+            {saving ? 'Salvando...' : (isEditing ? 'Salvar alterações' : 'Salvar achado')}
           </button>
         </div>
       </form>

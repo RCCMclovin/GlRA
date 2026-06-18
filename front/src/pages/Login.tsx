@@ -47,11 +47,11 @@ export function Login({ onLogin }: LoginProps) {
         <h2>Entrar no GIRA</h2>
         <label>
           E-mail
-          <input name="email" placeholder="user@glra.com" type="email" required />
+          <input name="email" placeholder="usuario@gira.com" type="email" required />
         </label>
         <label>
           Senha
-          <input name="password" placeholder="Senha" type="password" required />
+          <input name="password" placeholder="Sua senha" type="password" required />
         </label>
         {error && <small style={{ color: 'var(--red)' }}>{error}</small>}
         <button className="primary-button" type="submit" disabled={loading}>
