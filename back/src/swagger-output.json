@@ -991,6 +991,35 @@
         }
       }
     },
+    "/v1/user/": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "summary": "Recupera dados de todos os usuários.",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserDTO"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "403": {
+            "description": "User unautorized."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/user/checkemail/{email}": {
       "get": {
         "tags": [
