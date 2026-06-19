@@ -161,7 +161,7 @@ GlRA-main/
 
 ## 8. Fluxo principal de uso
 
-1. O usuário acessa a aplicação (`http://localhost:3001`);
+1. O usuário acessa a aplicação (`http://localhost:5173`);
 2. Realiza login com e-mail e senha;
 3. O dashboard exibe projetos, achados cadastrados e achados pendentes;
 4. O usuário pode criar projetos e registrar achados;
@@ -200,52 +200,9 @@ GlRA-main/
 
  ---
 
-## 10. Execução com Docker (recomendado)
+## 10. Execução manual
 
-### Pré-requisitos
-
-- [Docker](https://docs.docker.com/get-docker/) instalado
-- [Docker Compose](https://docs.docker.com/compose/install/) instalado
-
-### Executar
-
-```bash
-docker compose up --build
-```
-
-Isso inicia automaticamente:
-
-| Serviço | URL | Descrição |
-| --- | --- | --- |
-| **Frontend** | <http://localhost:3001> | Interface web (nginx + React) |
-| **Backend** | <http://localhost:3333> | API REST |
-| **Swagger** | <http://localhost:3001/api> | Documentação interativa da API |
-| **MySQL** | localhost:3306 | Banco de dados |
-
-O backend executa automaticamente:
-
-1. Aguarda o MySQL ficar disponível;
-2. Executa as migrações do Prisma;
-3. Popula o banco com dados iniciais (seed);
-4. Inicia o servidor.
-
-### Parar
-
-```bash
-docker compose down
-```
-
-### Limpar dados do banco
-
-```bash
-docker compose down -v
-```
-
- ---
-
-## 11. Execução manual (desenvolvimento)
-
-### 11.1 Banco de dados
+### 10.1 Banco de dados
 
 Certifique-se de ter um MySQL rodando. Pode usar Docker apenas para o banco:
 
@@ -259,7 +216,7 @@ docker run -d --name gira-mysql \
   mysql:8.0
 ```
 
-### 11.2 Backend
+### 10.2 Backend
 
 ```bash
 cd back
@@ -272,7 +229,7 @@ npm start               # inicia com nodemon (dev)
 
 O backend estará disponível em `http://localhost:3333`.
 
-### 11.3 Frontend
+### 10.3 Frontend
 
 ```bash
 cd front
@@ -284,7 +241,7 @@ O frontend estará disponível em `http://localhost:5173` com proxy automático 
 
 ---
 
-## 12. Documentação da API (Swagger)
+## 11. Documentação da API (Swagger)
 
 A documentação interativa da API está disponível em:
 
@@ -302,7 +259,7 @@ npm run swagger
 
  ---
 
-## 13. Endpoints da API
+## 12. Endpoints da API
 
 Todos os endpoints estão sob o prefixo `/v1/`.
 
@@ -383,7 +340,7 @@ Todos os endpoints estão sob o prefixo `/v1/`.
 
  ---
 
-## 14. Credenciais padrão
+## 13. Credenciais padrão
 
 O seed cria automaticamente um usuário administrador:
 
@@ -400,14 +357,14 @@ Novos usuários podem ser cadastrados via:
 
  ---
 
-## 15. Limitações atuais
+## 14. Limitações atuais
 
 - O upload e a visualização de evidências ainda precisam ser refinados no frontend (Limitadas a imagens);
 - Não há geração de relatórios;
 
  ---
 
-## 16. Possibilidades de evolução futura
+## 15. Possibilidades de evolução futura
 
 - Implementar relatórios de achados por projeto;
 - Permitir exportação em PDF, CSV ou Markdown;
@@ -417,7 +374,7 @@ Novos usuários podem ser cadastrados via:
 
  ---
 
-## 17. Link do repositório final
+## 16. Link do repositório final
 
 Repositório final do projeto:
 
