@@ -23,14 +23,13 @@
 - [7. Arquitetura geral e módulos principais](#7-arquitetura-geral-e-módulos-principais)
 - [8. Fluxo principal de uso](#8-fluxo-principal-de-uso)
 - [9. Tecnologias utilizadas](#9-tecnologias-utilizadas)
-- [10. Execução com Docker (recomendado)](#10-execução-com-docker-recomendado)
-- [11. Execução manual (desenvolvimento)](#11-execução-manual-desenvolvimento)
-- [12. Documentação da API (Swagger)](#12-documentação-da-api-swagger)
-- [13. Endpoints da API](#13-endpoints-da-api)
-- [14. Credenciais padrão](#14-credenciais-padrão)
-- [15. Limitações atuais](#15-limitações-atuais)
-- [16. Possibilidades de evolução futura](#16-possibilidades-de-evolução-futura)
-- [17. Link do repositório final](#17-link-do-repositório-final)
+- [10. Execução manual](#10-execução-manual)
+- [11. Documentação da API (Swagger)](#11-documentação-da-api-swagger)
+- [12. Endpoints da API](#12-endpoints-da-api)
+- [13. Credenciais padrão](#13-credenciais-padrão)
+- [14. Limitações atuais](#14-limitações-atuais)
+- [15. Possibilidades de evolução futura](#15-possibilidades-de-evolução-futura)
+- [16. Link do repositório final](#16-link-do-repositório-final)
 
  ---
 
