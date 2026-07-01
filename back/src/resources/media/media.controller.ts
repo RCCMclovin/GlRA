@@ -133,7 +133,11 @@ const getMediaById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as string;
     const media = await MediaService.getMediaById(id);
-    const absolutePath = path.resolve(media);
+    const baseDir = path.resolve(process.env.PUBLIC_PATH as string, 'user-uploads');
+    const absolutePath = path.resolve(baseDir, path.basename(media));
+    if (!absolutePath.startsWith(baseDir)) {
+      return res.status(StatusCodes.FORBIDDEN).send(ReasonPhrases.FORBIDDEN);
+    }
     res.sendFile(absolutePath);
   } catch (e) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(e);
